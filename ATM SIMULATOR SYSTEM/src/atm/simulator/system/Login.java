@@ -49,19 +49,29 @@ public class Login extends JFrame implements ActionListener {
 
         login = new JButton("SIGN IN");
         login.setBounds(300, 300, 100, 30);
-        login.setBackground(Color.BLUE);
+        login.setBackground(Color.ORANGE);
         login.setForeground(Color.BLACK);
+        login.setOpaque(true);
+        login.setBorderPainted(false);
         login.addActionListener(this);
         add(login);
 
 
         clear = new JButton("CLEAR");
         clear.setBounds(430, 300, 100, 30);
+        clear.setBackground(Color.ORANGE);
+        clear.setForeground(Color.BLACK);
+        clear.setOpaque(true);
+        clear.setBorderPainted(false);
         clear.addActionListener(this);
         add(clear);
 
         signup = new JButton("SIGN UP");
         signup.setBounds(300, 350, 230, 30);
+        signup.setBackground(Color.ORANGE);
+        signup.setForeground(Color.BLACK);
+        signup.setOpaque(true);
+        signup.setBorderPainted(false);
         signup.addActionListener(this);
         add(signup);
 
