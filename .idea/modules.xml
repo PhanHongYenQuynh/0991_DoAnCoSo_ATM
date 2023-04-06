@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/0991_DoAnCoSo_ATM.iml" filepath="$PROJECT_DIR$/.idea/0991_DoAnCoSo_ATM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mysql-connector-j-8.0.32/src/build/misc/misc.iml" filepath="$PROJECT_DIR$/mysql-connector-j-8.0.32/src/build/misc/misc.iml" />
+    </modules>
+  </component>
+</project>
