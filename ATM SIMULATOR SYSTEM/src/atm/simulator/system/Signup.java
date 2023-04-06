@@ -3,7 +3,7 @@ package atm.simulator.system;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
 public class Signup extends JFrame {
 
     Signup(){
@@ -46,12 +46,27 @@ public class Signup extends JFrame {
         dob.setBounds(100, 240, 200, 30);
         add(dob);
 
-        /* JDateChooser dataChooser = new JDateChooser();*/
+         JDateChooser dataChooser = new JDateChooser();
+         dataChooser.setBounds(300, 240, 400, 30);
+         dataChooser.setForeground(new Color(105, 105, 105));
+         add(dataChooser);
 
         JLabel gender = new JLabel("Gender: ");
         gender.setFont(new Font("Raleway", Font.BOLD, 20));
         gender.setBounds(100, 290, 200, 30);
         add(gender);
+
+        JRadioButton male = new JRadioButton("Male");
+        male.setBounds(300,290,120,30);
+        add(male);
+
+        JRadioButton female = new JRadioButton("Female");
+        female.setBounds(450, 290, 120, 30);
+        add(female);
+
+        ButtonGroup gendergroup = new ButtonGroup();
+        gendergroup.add(male);
+        gendergroup.add(female);
 
         JLabel email = new JLabel("Email Address: ");
         email.setFont(new Font("Raleway", Font.BOLD, 20));
@@ -67,6 +82,23 @@ public class Signup extends JFrame {
         marital.setFont(new Font("Raleway", Font.BOLD, 20));
         marital.setBounds(100, 390, 200, 30);
         add(marital);
+
+        JRadioButton married = new JRadioButton("Married");
+        married.setBounds(300,390,120,30);
+        add(married);
+
+        JRadioButton unmarried = new JRadioButton("Unmarried");
+        unmarried.setBounds(450, 390, 100, 30);
+        add(unmarried);
+
+        JRadioButton other = new JRadioButton("Other");
+        other.setBounds(630, 390, 100, 30);
+        add(other);
+
+        ButtonGroup maritalgroup = new ButtonGroup();
+        gendergroup.add(married);
+        gendergroup.add(unmarried);
+        gendergroup.add(other);
 
         JLabel address = new JLabel("Address: ");
         address.setFont(new Font("Raleway", Font.BOLD, 20));
@@ -107,6 +139,15 @@ public class Signup extends JFrame {
         pinTextField.setFont(new Font("Raleway", Font.BOLD, 14));
         pinTextField.setBounds(300, 590, 400, 30);
         add(pinTextField);
+
+        JButton next = new JButton("Next");
+        next.setBackground(Color.BLACK);
+        next.setForeground(Color.WHITE);
+        next.setOpaque(true);
+        next.setBorderPainted(false);
+        next.setFont(new Font("Raleway",Font.BOLD, 14));
+        next.setBounds(620,660,80,30);
+        add(next);
 
         getContentPane().setBackground(Color.WHITE);
 
