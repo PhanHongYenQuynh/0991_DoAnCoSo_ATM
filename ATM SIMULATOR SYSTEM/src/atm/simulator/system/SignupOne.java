@@ -20,10 +20,10 @@ public class SignupOne extends JFrame implements ActionListener {
         Random ran = new Random();
         random = Math.abs((ran.nextLong() % 9000L) + 1000L);
 
-        JLabel formno = new JLabel("APPLICATION FORM NO. " + random);
-        formno.setFont(new Font("Raleway", Font.BOLD, 38));
-        formno.setBounds(140, 20, 600, 40);
-        add(formno);
+        JLabel formo = new JLabel("APPLICATION FORM NO. " + random);
+        formo.setFont(new Font("Raleway", Font.BOLD, 38));
+        formo.setBounds(140, 20, 600, 40);
+        add(formo);
 
         JLabel personalDetails = new JLabel("Page 1: Personal Details");
         personalDetails.setFont(new Font("Raleway", Font.BOLD, 22));
@@ -105,9 +105,9 @@ public class SignupOne extends JFrame implements ActionListener {
         add(other);
 
         ButtonGroup maritalgroup = new ButtonGroup();
-        gendergroup.add(married);
-        gendergroup.add(unmarried);
-        gendergroup.add(other);
+        maritalgroup.add(married);
+        maritalgroup.add(unmarried);
+        maritalgroup.add(other);
 
         JLabel address = new JLabel("Address: ");
         address.setFont(new Font("Raleway", Font.BOLD, 20));
@@ -179,6 +179,7 @@ public class SignupOne extends JFrame implements ActionListener {
             gender = "Female";
         }
         String email = emailTextField.getText();
+
         String marital = null;
         if(married.isSelected()){
             marital = "Married";
@@ -203,6 +204,9 @@ public class SignupOne extends JFrame implements ActionListener {
                 Conn c = new Conn();
                 String query="insert into signup values('"+formo+"', '"+name+"', '"+fname+"', '"+dob+"', '"+gender+"', '"+email+"', '"+marital+"', '"+address+"', '"+city+"', '"+pin+"', '"+state+"')";
                 c.s.executeUpdate(query);
+
+                setVisible(false);
+                new SignupTwo(formo).setVisible(true);
             }
 
         }catch (Exception e){
