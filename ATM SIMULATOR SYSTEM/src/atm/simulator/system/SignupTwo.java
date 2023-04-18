@@ -200,6 +200,10 @@ public class SignupTwo extends JFrame implements ActionListener {
                 String query="insert into signuptwo values('"+formo+"', '"+sreligion+"', '"+snationality+"', '"+scard+"', '"+seducation+"', '"+soccupation+"', '"+pan+"', '"+cic+"', '"+seniorcitizen+"', '"+exisitingaccount+"')";
                 c.s.executeUpdate(query);
 
+                //Signup3 Object
+                setVisible(false);
+                new SignupThree(formo).setVisible(true);
+
             } catch (Exception e){
             System.out.println(e);
         }
