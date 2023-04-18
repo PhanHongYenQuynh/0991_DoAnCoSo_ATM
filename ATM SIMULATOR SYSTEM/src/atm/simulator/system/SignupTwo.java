@@ -119,7 +119,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         Senior.setBounds(100, 540, 200, 30);
         add(Senior);
 
-        syes = new JRadioButton("Đúng");
+        syes = new JRadioButton("Phải");
         syes.setBounds(300,540,120,30);
         add(syes);
 
@@ -133,16 +133,16 @@ public class SignupTwo extends JFrame implements ActionListener {
         seniorgroup.add(sno);
 
 
-        JLabel pincode = new JLabel("Tài khoản hiện có: ");
+        JLabel pincode = new JLabel("TK Ngân Hàng:");
         pincode.setFont(new Font("Raleway", Font.BOLD, 20));
-        pincode.setBounds(100, 590, 200, 30);
+        pincode.setBounds(100, 590, 330, 30);
         add(pincode);
 
         eyes = new JRadioButton("Có");
         eyes.setBounds(300,590,120,30);
         add(eyes);
 
-        eno = new JRadioButton("Không");
+        eno = new JRadioButton("Chưa");
         eno.setBounds(450, 590, 100, 30);
         add(eno);
 
@@ -177,7 +177,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         String soccupation = (String) occupation.getSelectedItem();
         String seniorcitizen = null;
         if(syes.isSelected()){
-            seniorcitizen = "Đúng";
+            seniorcitizen = "Phải";
 
         }else if(sno.isSelected()){
             seniorcitizen = "Không";
@@ -187,7 +187,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         if(eyes.isSelected()){
             exisitingaccount = "Có";
         } else if (eno.isSelected()){
-            exisitingaccount = "Không";
+            exisitingaccount = "Chưa";
         }
 
 
@@ -195,7 +195,11 @@ public class SignupTwo extends JFrame implements ActionListener {
         String cic = cicTextField.getText();
 
         try {
-
+            if(pan.equals("")) {
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập số tài khoản chính (Pan number)");
+            } else if (cic.equals("")) {
+                JOptionPane.showMessageDialog(null, "Vui lòng điền căn cước công dân ");
+            }else{
                 Conn c = new Conn();
                 String query="insert into signuptwo values('"+formno+"', '"+sreligion+"', '"+snationality+"', '"+sincome+"', '"+seducation+"', '"+soccupation+"', '"+pan+"', '"+cic+"', '"+seniorcitizen+"', '"+exisitingaccount+"')";
                 c.s.executeUpdate(query);
@@ -203,11 +207,12 @@ public class SignupTwo extends JFrame implements ActionListener {
                 //Signup3 Object
                 setVisible(false);
                 new SignupThree(formno).setVisible(true);
+            }
 
-            } catch (Exception e){
+
+        } catch (Exception e){
             System.out.println(e);
         }
-
 
     }
     public static void main(String args[]){
