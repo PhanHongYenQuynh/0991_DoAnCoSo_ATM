@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.sql.*;
+import java.util.Date;
 
 public class Withdrawal extends JFrame implements ActionListener {
 
@@ -48,31 +50,46 @@ public class Withdrawal extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent ae){
-        if(ae.getSource()==withdrawl){
+        try{
             String number = amount.getText();
             Date date = new Date();
-            if(number.equals(" ")){
-                JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn rút!.");
-            }else{
-                try {
+            if(ae.getSource()==withdrawl){
+                if(number.equals("")){
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn rút!.");
+                }else{
                     Conn conn = new Conn();
-                    String query = "insert into atm values('"+pinnumber+"', '"+date+"', 'Rút tiền', '"+number+"')";
-                    conn.s.executeUpdate(query);
+                    ResultSet rs = conn.s.executeQuery("select * from atm where pin = '"+pinnumber+"'");
+                    int balance = 0;
+                    while(rs.next()){
+                        if(rs.getString("type").equals("Gửi tiền")){
+                            balance += Integer.parseInt(rs.getString("amount"));
+                        }else{
+                            balance -= Integer.parseInt(rs.getString("amount"));
+                        }
+                    }
+                    if(balance < Integer.parseInt(number)){
+                        JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
+                        return;
+                    }
+
+                    conn.s.executeUpdate("insert into atm values('"+pinnumber+"', '"+date+"', 'Rút tiền', '"+number+"')");
                     JOptionPane.showMessageDialog(null, "Rút tiền thành công là: "+number+" VNĐ");
+
                     setVisible(false);
                     new Transactions(pinnumber).setVisible(true);
-                }catch (Exception e){
-                    System.out.println(e);
                 }
-
+            }else if(ae.getSource()==back){
+                setVisible(false);
+                new Transactions(pinnumber).setVisible(true);
             }
-
-        } else if (ae.getSource()==back) {
-            setVisible(false);
-            new Transactions(pinnumber).setVisible(true);
-
+        }catch(Exception e){
+            e.printStackTrace();
+            System.out.println("error: "+e);
         }
+
     }
+
+
     public static void main(String args[]){
         new Withdrawal("").setVisible(true);
     }
