@@ -1,8 +1,7 @@
 create database atmsimulatorsystem;
 show databases;
 use atmsimulatorsystem;
-
-Drop table login;
+Drop table table_name;
 
 create table signup(
 formno varchar(20), 
@@ -14,9 +13,9 @@ gender varchar(20),
 email varchar(30),
 marital_status nvarchar(20),
 address nvarchar(120),
-city nvarchar(120),
+ward nvarchar(120),
 pincode varchar(20), 
-state nvarchar(20));
+city nvarchar(120));
 
 create table signuptwo(
 formno varchar(20), 
@@ -42,6 +41,13 @@ formno varchar(20),
 cardnumber varchar(25), 
 pin varchar(10));
 
+
+create table atm(
+pin varchar(10), 
+date varchar(50), 
+type varchar(20), 
+amount varchar(20));
+
 show tables;
 
 select * from signup;
@@ -52,6 +58,7 @@ select * from signupthree;
 
 select * from login;
 
+select * from atm
 
 
 

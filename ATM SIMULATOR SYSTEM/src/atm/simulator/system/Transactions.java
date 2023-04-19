@@ -17,7 +17,7 @@ public class Transactions  extends JFrame implements ActionListener {
         image.setBounds(0, 0, 900, 900);
         add(image);
 
-        JLabel text = new JLabel("Vui lòng chọn hình thức giao dịch");
+        JLabel text = new JLabel("Vui lòng chọn hình thức giao dịch.");
         text.setBounds(200, 300, 700, 35);
         text.setForeground(Color.WHITE);
         text.setFont(new Font("System", Font.BOLD, 16));
@@ -69,9 +69,16 @@ public class Transactions  extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae){
         if(ae.getSource()==exit){
             System.exit(0);
+        } else if (ae.getSource()==deposit) {
+            setVisible(false);
+            new Deposit(pinnumber).setVisible(true);
+        }else if (ae.getSource()==withdrawl) {
+            setVisible(false);
+            new Withdrawal(pinnumber).setVisible(true);
         }
     }
     public static  void main(String args[]){
+
         new Transactions("").setVisible(true);
     }
 }
