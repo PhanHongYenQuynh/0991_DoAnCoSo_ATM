@@ -12,7 +12,7 @@ public class SignupOne extends JFrame implements ActionListener {
 
     long random;
     JTextField nameTextField, fnameTextField, mnameTextField, emailTextField, addressTextField,
-                cityTextField, wardTextField, pinTextField;
+            cityTextField, wardTextField, pinTextField;
     JFormattedTextField phoneFormattedTextField;
 
     JButton next;
@@ -79,10 +79,10 @@ public class SignupOne extends JFrame implements ActionListener {
         dob.setBounds(100, 340, 200, 30);
         add(dob);
 
-         dataChooser = new JDateChooser();
-         dataChooser.setBounds(300, 340, 400, 30);
-         dataChooser.setForeground(new Color(105, 105, 105));
-         add(dataChooser);
+        dataChooser = new JDateChooser();
+        dataChooser.setBounds(300, 340, 400, 30);
+        dataChooser.setForeground(new Color(105, 105, 105));
+        add(dataChooser);
 
         JLabel gender = new JLabel("Giới tính: ");
         gender.setFont(new Font("Raleway", Font.BOLD, 20));
@@ -275,4 +275,3 @@ public class SignupOne extends JFrame implements ActionListener {
         new SignupOne();
     }
 }
-
