@@ -1,11 +1,16 @@
 create database atmsimulatorsystem;
 show databases;
 use atmsimulatorsystem;
-Drop table table_name;
+Drop table signup;
+Drop table signuptwo;
+Drop table signupthree;
+Drop table login;
+Drop table atm;
 
 create table signup(
 formno varchar(20), 
 name nvarchar(120), 
+phone char(20),
 father_name nvarchar(120), 
 mother_name nvarchar(120), 
 dob varchar(20), 
@@ -24,8 +29,10 @@ nationality varchar(100),
 income varchar(100), 
 education varchar(20), 
 occupation varchar(30),
-pan nvarchar(20),
+tax nvarchar(20),
 cic nvarchar(120),
+datecic varchar(50),
+wherecic nvarchar(200),
 seniorcitizen nvarchar(120),
 exisitingaccount varchar(20));
 
@@ -46,7 +53,7 @@ create table atm(
 pin varchar(10), 
 date varchar(50), 
 type varchar(20), 
-amount varchar(20));
+amount nvarchar(120));
 
 show tables;
 
