@@ -1,18 +1,24 @@
 package atm.simulator.system;
-
+import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.MaskFormatter;
+import javax.swing.text.NumberFormatter;
+import java.text.ParseException;
 import java.util.*;
 import com.toedter.calendar.JDateChooser;
 import java.awt.event.*;
 public class SignupTwo extends JFrame implements ActionListener {
 
 
-    JTextField cicTextField, panTextField;
+    JTextField cicTextField, taxTextField, wherecicTextField;
 
     JButton next;
     JRadioButton syes, sno, eyes, eno;
     JComboBox religion, nationality, occupation, education, income;
+    JDateChooser dataChooser;
     String formno;
     SignupTwo(String formno){
 
@@ -94,15 +100,15 @@ public class SignupTwo extends JFrame implements ActionListener {
         occupation.setBackground(Color.WHITE);
         add(occupation);
 
-        JLabel PAN = new JLabel("PAN Number: ");
-        PAN.setFont(new Font("Raleway", Font.BOLD, 20));
-        PAN.setBounds(100, 440, 200, 30);
-        add(PAN);
+        JLabel TAX = new JLabel("Mã số thuế: ");
+        TAX.setFont(new Font("Raleway", Font.BOLD, 20));
+        TAX.setBounds(100, 440, 200, 30);
+        add(TAX);
 
-        panTextField = new JTextField();
-        panTextField.setFont(new Font("Raleway", Font.BOLD, 14));
-        panTextField.setBounds(300, 440, 400, 30);
-        add(panTextField);
+        taxTextField = new JTextField();
+        taxTextField.setFont(new Font("Raleway", Font.BOLD, 14));
+        taxTextField.setBounds(300, 440, 400, 30);
+        add(taxTextField);
 
         JLabel CIC = new JLabel("CCCD: ");
         CIC.setFont(new Font("Raleway", Font.BOLD, 20));
@@ -114,17 +120,37 @@ public class SignupTwo extends JFrame implements ActionListener {
         cicTextField.setBounds(300, 490, 400, 30);
         add(cicTextField);
 
+        JLabel datecic = new JLabel("Ngày cấp: ");
+        datecic.setFont(new Font("Raleway", Font.BOLD, 20));
+        datecic.setBounds(100, 540, 200, 30);
+        add(datecic);
+
+        dataChooser = new JDateChooser();
+        dataChooser.setBounds(300, 540, 400, 30);
+        dataChooser.setForeground(new Color(105, 105, 105));
+        add(dataChooser);
+
+        JLabel wherecic = new JLabel("Nơi cấp: ");
+        wherecic.setFont(new Font("Raleway", Font.BOLD, 20));
+        wherecic.setBounds(100, 590, 200, 30);
+        add(wherecic);
+
+        wherecicTextField = new JTextField();
+        wherecicTextField.setFont(new Font("Raleway", Font.BOLD, 14));
+        wherecicTextField.setBounds(300, 590, 400, 30);
+        add(wherecicTextField);
+
         JLabel Senior = new JLabel("Người cao tuổi: ");
         Senior.setFont(new Font("Raleway", Font.BOLD, 20));
-        Senior.setBounds(100, 540, 200, 30);
+        Senior.setBounds(100, 640, 200, 30);
         add(Senior);
 
         syes = new JRadioButton("Phải");
-        syes.setBounds(300,540,120,30);
+        syes.setBounds(300,640,120,30);
         add(syes);
 
         sno = new JRadioButton("Không");
-        sno.setBounds(450, 540, 100, 30);
+        sno.setBounds(450, 640, 100, 30);
         add(sno);
 
 
@@ -133,17 +159,17 @@ public class SignupTwo extends JFrame implements ActionListener {
         seniorgroup.add(sno);
 
 
-        JLabel pincode = new JLabel("TK Ngân Hàng:");
-        pincode.setFont(new Font("Raleway", Font.BOLD, 20));
-        pincode.setBounds(100, 590, 330, 30);
-        add(pincode);
+        JLabel existaccount = new JLabel("TK Ngân Hàng:");
+        existaccount.setFont(new Font("Raleway", Font.BOLD, 20));
+        existaccount.setBounds(100, 690, 330, 30);
+        add(existaccount);
 
         eyes = new JRadioButton("Có");
-        eyes.setBounds(300,590,120,30);
+        eyes.setBounds(300,690,120,30);
         add(eyes);
 
         eno = new JRadioButton("Chưa");
-        eno.setBounds(450, 590, 100, 30);
+        eno.setBounds(450, 690, 100, 30);
         add(eno);
 
 
@@ -157,7 +183,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         next.setOpaque(true);
         next.setBorderPainted(false);
         next.setFont(new Font("Raleway",Font.BOLD, 14));
-        next.setBounds(620,660,120,30);
+        next.setBounds(620,740,120,30);
         next.addActionListener(this);
         add(next);
 
@@ -175,6 +201,8 @@ public class SignupTwo extends JFrame implements ActionListener {
         String sincome = (String) income.getSelectedItem();
         String seducation = (String) education.getSelectedItem();
         String soccupation = (String) occupation.getSelectedItem();
+        String sdatecic = ((JTextField)dataChooser.getDateEditor().getUiComponent()).getText();
+
         String seniorcitizen = null;
         if(syes.isSelected()){
             seniorcitizen = "Phải";
@@ -190,18 +218,22 @@ public class SignupTwo extends JFrame implements ActionListener {
             exisitingaccount = "Chưa";
         }
 
-
-        String pan = panTextField.getText();
+        String where = wherecicTextField.getText();
+        String tax = taxTextField.getText();
         String cic = cicTextField.getText();
 
         try {
-            if(pan.equals("")) {
-                JOptionPane.showMessageDialog(null, "Vui lòng nhập số tài khoản chính (Pan number)");
+            if(tax.equals("")) {
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập mã số thuê.");
             } else if (cic.equals("")) {
-                JOptionPane.showMessageDialog(null, "Vui lòng điền căn cước công dân ");
+                JOptionPane.showMessageDialog(null, "Vui lòng điền căn cước công dân. ");
+            } else if (sdatecic.equals("")) {
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập ngày cấp căn cước công dân. ");
+            } else if (where.equals("")) {
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập nơi cấp căn cước công dân. ");
             }else{
                 Conn c = new Conn();
-                String query="insert into signuptwo values('"+formno+"', '"+sreligion+"', '"+snationality+"', '"+sincome+"', '"+seducation+"', '"+soccupation+"', '"+pan+"', '"+cic+"', '"+seniorcitizen+"', '"+exisitingaccount+"')";
+                String query="insert into signuptwo values('"+formno+"', '"+sreligion+"', '"+snationality+"', '"+sincome+"', '"+seducation+"', '"+soccupation+"', '"+tax+"', '"+cic+"', '"+sdatecic+"','"+where+"','"+seniorcitizen+"', '"+exisitingaccount+"')";
                 c.s.executeUpdate(query);
 
                 //Signup3 Object
