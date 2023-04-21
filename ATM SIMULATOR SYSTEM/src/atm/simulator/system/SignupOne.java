@@ -49,7 +49,17 @@ public class SignupOne extends JFrame implements ActionListener {
         phone.setBounds(100, 190, 200, 30);
         add(phone);
 
-        phoneFormattedTextField = new JFormattedTextField();
+        try {
+            MaskFormatter formatter = new MaskFormatter("####-###-###");
+            formatter.setPlaceholderCharacter('_');
+            formatter.setValidCharacters("0123456789");
+            phoneFormattedTextField = new JFormattedTextField(formatter);
+        } catch (ParseException e) {
+            // Xử lý ngoại lệ khi parse thất bại
+            JOptionPane.showMessageDialog(null, "Lỗi định dạng số điện thoại!");
+            return;
+        }
+
         phoneFormattedTextField.setFont(new Font("Raleway", Font.BOLD, 14));
         phoneFormattedTextField.setBounds(300, 190, 400, 30);
         add(phoneFormattedTextField);
@@ -219,32 +229,14 @@ public class SignupOne extends JFrame implements ActionListener {
         String ward = wardTextField.getText();
         String city = cityTextField.getText();
         String pin = pinTextField.getText();
-        String phone = phoneFormattedTextField.getText();
-
-        MaskFormatter phoneFormatter = null;
-        try {
-            phoneFormatter = new MaskFormatter("(+##) ##-#######");
-            phoneFormatter.setPlaceholderCharacter('_');
-            phoneFormatter.setValidCharacters("0123456789");
-        } catch (ParseException e) {
-            JOptionPane.showMessageDialog(null, "Lỗi định dạng số điện thoại!");
-            return; // exit method if there is a parse exception
-        }
-        phoneFormattedTextField.setFormatterFactory(new DefaultFormatterFactory(phoneFormatter));
-        try {
-            phoneFormatter.valueToString(phoneFormattedTextField.getValue());
-        } catch (ParseException e) {
-            JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ!");
-        }
-
+        String phone = phoneFormattedTextField.getValue() != null ? phoneFormattedTextField.getValue().toString() : "";
         try {
 
             if(name.equals("")){
                 JOptionPane.showMessageDialog(null, "Vui lòng không bỏ trống họ tên.");
             }else if (phone.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng điền số điện thoại.");
-            }
-            else if (fname.equals("")) {
+            } else if (fname.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng không bỏ trống tên cha.");
             } else if (mname.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng không bỏ trống tên mẹ.");

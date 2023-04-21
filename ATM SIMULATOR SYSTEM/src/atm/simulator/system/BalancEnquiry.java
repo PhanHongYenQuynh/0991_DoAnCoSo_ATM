@@ -47,10 +47,10 @@ public class BalancEnquiry extends JFrame implements ActionListener {
         image.add(text);
 
         String amountText = numberToWords(balance);
-        JLabel label = new JLabel("Hiện thị bằng chữ:\n" + amountText);
+        JLabel label = new JLabel(amountText);
         label.setForeground(Color.WHITE);
         label.setPreferredSize(new Dimension(400, 50));
-        label.setBounds(170, 350, 500, 50);
+        label.setBounds(170, 350, 520, 50);
         image.add(label);
 
         setSize(900, 900);

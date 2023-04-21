@@ -13,7 +13,8 @@ import java.awt.event.*;
 public class SignupTwo extends JFrame implements ActionListener {
 
 
-    JTextField cicTextField, taxTextField, wherecicTextField;
+    JTextField  wherecicTextField;
+    JFormattedTextField cicFormattedTextField, taxFormnattedTextField;
 
     JButton next;
     JRadioButton syes, sno, eyes, eno;
@@ -80,77 +81,108 @@ public class SignupTwo extends JFrame implements ActionListener {
 
         JLabel Education = new JLabel("Học vấn: ");
         Education.setFont(new Font("Raleway", Font.BOLD, 20));
-        Education.setBounds(100, 315, 200, 30);
+        Education.setBounds(100, 290, 200, 30);
         add(Education);
 
         String educationValues[]= {"Không trình độ","12/12", "Đại học", "Cao Đẳng", "Tiến Sĩ", "Khác"};
         education = new JComboBox(educationValues);
-        education.setBounds(300, 315, 400, 30);
+        education.setBounds(300, 290, 400, 30);
         education.setBackground(Color.WHITE);
         add(education);
 
         JLabel Occupation = new JLabel("Nghề nghiệp: ");
         Occupation.setFont(new Font("Raleway", Font.BOLD, 20));
-        Occupation.setBounds(100, 390, 200, 30);
+        Occupation.setBounds(100, 350, 200, 30);
         add(Occupation);
 
-        String occupationValues[]= {"Nhân viên","Tự kinh doanh", "Doanh nhân", "Sinh viên", "Nghỉ hưu", "Khác"};
+        String occupationValues[]= {"Công nhân","Nhân viên","Tự kinh doanh", "Doanh nhân", "Sinh viên", "Nghỉ hưu", "Khác"};
         occupation = new JComboBox(occupationValues);
-        occupation.setBounds(300, 390, 400, 30);
+        occupation.setBounds(300, 350, 400, 30);
         occupation.setBackground(Color.WHITE);
         add(occupation);
 
         JLabel TAX = new JLabel("Mã số thuế: ");
         TAX.setFont(new Font("Raleway", Font.BOLD, 20));
-        TAX.setBounds(100, 440, 200, 30);
+        TAX.setBounds(100, 400, 200, 30);
         add(TAX);
 
-        taxTextField = new JTextField();
-        taxTextField.setFont(new Font("Raleway", Font.BOLD, 14));
-        taxTextField.setBounds(300, 440, 400, 30);
-        add(taxTextField);
+        JLabel taxdetail = new JLabel("Vui lòng nhập đủ 10 số");
+        taxdetail.setFont(new Font("Raleway", Font.BOLD, 12));
+        taxdetail.setBounds(100, 420, 200, 30);
+        add(taxdetail);
+
+        try {
+            MaskFormatter formatter = new MaskFormatter("##########");
+            formatter.setPlaceholderCharacter('_');
+            formatter.setValidCharacters("0123456789");
+            taxFormnattedTextField = new JFormattedTextField(formatter);
+        } catch (ParseException e) {
+            // Xử lý ngoại lệ khi parse thất bại
+            JOptionPane.showMessageDialog(null, "Lỗi định dạng số điện thoại!");
+            return;
+        }
+
+        taxFormnattedTextField.setFont(new Font("Raleway", Font.BOLD, 14));
+        taxFormnattedTextField.setBounds(300, 400, 400, 30);
+        add(taxFormnattedTextField);
+
 
         JLabel CIC = new JLabel("CCCD: ");
         CIC.setFont(new Font("Raleway", Font.BOLD, 20));
-        CIC.setBounds(100, 490, 200, 30);
+        CIC.setBounds(100, 455, 200, 30);
         add(CIC);
 
-        cicTextField = new JTextField();
-        cicTextField.setFont(new Font("Raleway", Font.BOLD, 14));
-        cicTextField.setBounds(300, 490, 400, 30);
-        add(cicTextField);
+        JLabel cicdetail = new JLabel("Vui lòng nhập đủ 12 số");
+        cicdetail.setFont(new Font("Raleway", Font.BOLD, 12));
+        cicdetail.setBounds(100, 475, 200, 30);
+        add(cicdetail);
+
+        try {
+            MaskFormatter formatter = new MaskFormatter("############");
+            formatter.setPlaceholderCharacter('_');
+            formatter.setValidCharacters("0123456789");
+            cicFormattedTextField = new JFormattedTextField(formatter);
+        } catch (ParseException e) {
+            // Xử lý ngoại lệ khi parse thất bại
+            JOptionPane.showMessageDialog(null, "Lỗi định dạng số điện thoại!");
+            return;
+        }
+
+        cicFormattedTextField.setFont(new Font("Raleway", Font.BOLD, 14));
+        cicFormattedTextField.setBounds(300, 455, 400, 30);
+        add(cicFormattedTextField);
 
         JLabel datecic = new JLabel("Ngày cấp: ");
         datecic.setFont(new Font("Raleway", Font.BOLD, 20));
-        datecic.setBounds(100, 540, 200, 30);
+        datecic.setBounds(100, 520, 200, 30);
         add(datecic);
 
         dataChooser = new JDateChooser();
-        dataChooser.setBounds(300, 540, 400, 30);
+        dataChooser.setBounds(300, 520, 400, 30);
         dataChooser.setForeground(new Color(105, 105, 105));
         add(dataChooser);
 
         JLabel wherecic = new JLabel("Nơi cấp: ");
         wherecic.setFont(new Font("Raleway", Font.BOLD, 20));
-        wherecic.setBounds(100, 590, 200, 30);
+        wherecic.setBounds(100, 565, 200, 30);
         add(wherecic);
 
         wherecicTextField = new JTextField();
         wherecicTextField.setFont(new Font("Raleway", Font.BOLD, 14));
-        wherecicTextField.setBounds(300, 590, 400, 30);
+        wherecicTextField.setBounds(300, 565, 400, 30);
         add(wherecicTextField);
 
         JLabel Senior = new JLabel("Người cao tuổi: ");
         Senior.setFont(new Font("Raleway", Font.BOLD, 20));
-        Senior.setBounds(100, 640, 200, 30);
+        Senior.setBounds(100, 625, 200, 30);
         add(Senior);
 
         syes = new JRadioButton("Phải");
-        syes.setBounds(300,640,120,30);
+        syes.setBounds(300,625,120,30);
         add(syes);
 
         sno = new JRadioButton("Không");
-        sno.setBounds(450, 640, 100, 30);
+        sno.setBounds(450, 625, 100, 30);
         add(sno);
 
 
@@ -219,8 +251,8 @@ public class SignupTwo extends JFrame implements ActionListener {
         }
 
         String where = wherecicTextField.getText();
-        String tax = taxTextField.getText();
-        String cic = cicTextField.getText();
+        String tax = taxFormnattedTextField.getText();
+        String cic = cicFormattedTextField.getValue() != null ? cicFormattedTextField.getValue().toString() : "";
 
         try {
             if(tax.equals("")) {

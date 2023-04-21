@@ -51,7 +51,7 @@ public class Deposit extends JFrame implements ActionListener {
         if(ae.getSource()==deposit){
             String number = amount.getText();
             Date date = new Date();
-            if(number.equals(" ")){
+            if(number.equals("")){
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn gửi!.");
             }else{
                 try {
