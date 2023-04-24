@@ -93,19 +93,15 @@ public class Withdrawal extends JFrame implements ActionListener {
                 if(number.equals("")){
                     JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn rút!.");
                 }else{
+
                     Conn conn = new Conn();
-                    ResultSet rs = conn.s.executeQuery("select * from atm where pin = '"+pinnumber+"'");
-                    int balance = 0;
-                    while(rs.next()){
-                        if(rs.getString("type").equals("Gửi tiền")){
-                            balance += Integer.parseInt(rs.getString("amount"));
-                        }else{
-                            balance -= Integer.parseInt(rs.getString("amount"));
+                    ResultSet rs = conn.s.executeQuery("SELECT balance FROM bank_account WHERE pin = '" + pinnumber + "'");
+                    if (rs.next()) {
+                        int currentBalance = rs.getInt("balance");
+                        if (currentBalance < Integer.parseInt(number)) {
+                            JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
+                            return;
                         }
-                    }
-                    if(balance < Integer.parseInt(number)){
-                        JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
-                        return;
                     }
 
 

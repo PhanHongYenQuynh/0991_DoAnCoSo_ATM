@@ -125,7 +125,7 @@ public class FastCash  extends JFrame implements ActionListener {
                 ResultSet rs = conn.s.executeQuery("select * from atm where pin= '"+pinnumber+"'");
                 int balance = 0;
                 while (rs.next()) {
-                    if (rs.getString("type").equals("Gửi tiền")) {
+                    if (rs.getString("type").equals("Gửi tiền") || rs.getString("type").equals("Chuyển khoản")) {
                         balance += Integer.parseInt(rs.getString("amount"));
                     } else {
                         balance -= Integer.parseInt(rs.getString("amount"));
@@ -135,6 +135,8 @@ public class FastCash  extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
                     return;
                 }
+
+
                     Date date = new Date();
 
 
