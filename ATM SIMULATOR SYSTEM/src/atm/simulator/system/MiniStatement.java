@@ -71,8 +71,8 @@ public class MiniStatement extends JFrame  implements ActionListener{
         label.setBounds(20, 530, 600, 30);
         add(label);
 
-        mini.setBounds(20,45,400,500);
-        setSize(550, 680);
+        mini.setBounds(20,45,400,800);
+        setSize(550, 700);
         setLocation(20, 20);
         getContentPane().setBackground(Color.WHITE);
         setVisible(true);

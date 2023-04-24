@@ -122,24 +122,16 @@ public class FastCash  extends JFrame implements ActionListener {
             String amount = ((JButton)ae.getSource()).getText().substring(0, ((JButton)ae.getSource()).getText().length() - 4);;
             Conn conn = new Conn();
             try{
-                ResultSet rs = conn.s.executeQuery("select * from atm where pin= '"+pinnumber+"'");
-                int balance = 0;
-                while (rs.next()) {
-                    if (rs.getString("type").equals("Gửi tiền") || rs.getString("type").equals("Chuyển khoản")) {
-                        balance += Integer.parseInt(rs.getString("amount"));
-                    } else {
-                        balance -= Integer.parseInt(rs.getString("amount"));
+
+                ResultSet rs = conn.s.executeQuery("SELECT balance FROM bank_account WHERE pin = '" + pinnumber + "'");
+                if (rs.next()) {
+                    int currentBalance = rs.getInt("balance");
+                    if (currentBalance < Integer.parseInt(amount)) {
+                        JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
+                        return;
                     }
                 }
-                if (ae.getSource() != back && balance < Integer.parseInt(amount)) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
-                    return;
-                }
-
-
-                    Date date = new Date();
-
-
+                Date date = new Date();
                     int amountInt = Integer.parseInt(amount);
                     String amountText = numberToWords(amountInt);
                     JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
