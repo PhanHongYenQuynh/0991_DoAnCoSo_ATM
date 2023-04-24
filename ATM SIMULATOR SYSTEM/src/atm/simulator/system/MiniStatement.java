@@ -18,22 +18,23 @@ public class MiniStatement extends JFrame  implements ActionListener{
         add(mini);
 
         JLabel bank = new JLabel("Hutech Bank");
-        bank.setBounds(150, 20, 100, 20);
+        bank.setFont(new Font("Osward", Font.BOLD, 22));
+        bank.setBounds(200, 30, 250, 40);
         add(bank);
 
         JLabel card = new JLabel();
-        card.setBounds(20, 80, 300, 20);
+        card.setBounds(20, 100, 300, 20);
         add(card);
 
         JLabel balancee = new JLabel();
-        balancee.setBounds(20, 500, 300, 20);
+        balancee.setBounds(20, 750, 300, 20);
         add(balancee);
 
         try{
             Conn c = new Conn();
             ResultSet rs = c.s.executeQuery("select * from login where pin = '"+pinnumber+"'");
             while(rs.next()){
-                card.setText("Card Number:    " + rs.getString("cardnumber").substring(0, 4) + "XXXXXXXX" + rs.getString("cardnumber").substring(12));
+                card.setText("Card number:    " + rs.getString("cardnumber").substring(0, 4) + "XXXXXXXX" + rs.getString("cardnumber").substring(12));
             }
         }catch(Exception e){
             System.out.println(e);
@@ -68,11 +69,11 @@ public class MiniStatement extends JFrame  implements ActionListener{
 
         String amountText = numberToWords(balance);
         JLabel label = new JLabel("Số dư bằng chữ: \n"+ amountText);
-        label.setBounds(20, 530, 600, 30);
+        label.setBounds(20, 800, 600, 30);
         add(label);
 
         mini.setBounds(20,45,400,800);
-        setSize(550, 700);
+        setSize(550, 1000);
         setLocation(20, 20);
         getContentPane().setBackground(Color.WHITE);
         setVisible(true);
