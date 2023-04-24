@@ -3,6 +3,9 @@ package atm.simulator.system;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class SignupThree extends JFrame implements ActionListener {
@@ -11,6 +14,7 @@ public class SignupThree extends JFrame implements ActionListener {
     JCheckBox c1, c2, c3, c4, c5, c6, c7;
     JButton submit, cancel;
     String formno;
+
     SignupThree(String formno){
         this.formno = formno;
         setLayout(null);
@@ -191,25 +195,33 @@ public class SignupThree extends JFrame implements ActionListener {
                 facility = facility + " E-Statement";
             }
 
+
+            int balance=0;
+            int wrong_attempts=0;
+            Timestamp lockedUntil = null;
+
             try{
-                    if(accountType.equals("")){
-                        JOptionPane.showMessageDialog(null, "Vui lòng chọn loại tài khoản");
-                    }else{
-                        Conn conn = new Conn();
-                        String query1 = "insert into signupthree values('"+formno+"','"+accountType+"','"+cardnumber+"','"+pinnumber+"','"+facility+"')";
-                        String query2 = "insert into login values('"+formno+"','"+cardnumber+"','"+pinnumber+"')";
-                        conn.s.executeUpdate(query1);
-                        conn.s.executeUpdate(query2);
+                if(accountType.equals("")){
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn loại tài khoản");
+                }else{
+                    Conn conn = new Conn();
+                    String query1 = "insert into signupthree values('"+formno+"','"+accountType+"','"+cardnumber+"','"+pinnumber+"','"+facility+"')";
+                    String query2 = "insert into login values('"+formno+"','"+cardnumber+"','"+pinnumber+"', '"+wrong_attempts+"',"+ (lockedUntil == null ? "null" : "'" + lockedUntil + "'") + ")";
+                    String query3 = "insert into bank_account values('" + cardnumber + "','" + pinnumber + "','" + balance + "')";
+                    conn.s.executeUpdate(query1);
+                    conn.s.executeUpdate(query2);
+                    conn.s.executeUpdate(query3);
 
-                        JOptionPane.showMessageDialog(null, "STK:" + cardnumber + "\n Pin:"+ pinnumber);
 
-                        setVisible(false);
-                        new Deposit(pinnumber).setVisible(false);
+                    JOptionPane.showMessageDialog(null, "STK:" + cardnumber + "\n Pin:"+ pinnumber);
 
-                    }
+                    setVisible(false);
+                    new Deposit(pinnumber).setVisible(false);
+
+                }
 
             }catch(Exception e){
-               System.out.println(e);
+                System.out.println(e);
             }
 
 

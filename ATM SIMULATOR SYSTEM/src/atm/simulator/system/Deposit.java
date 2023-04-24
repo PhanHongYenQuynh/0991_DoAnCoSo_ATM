@@ -3,6 +3,7 @@ package atm.simulator.system;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.ResultSet;
 import java.util.*;
 
 public class Deposit extends JFrame implements ActionListener {
@@ -10,6 +11,7 @@ public class Deposit extends JFrame implements ActionListener {
     JTextField amount;
     JButton deposit, back;
     String pinnumber;
+
     Deposit(String pinnumber){
         this.pinnumber = pinnumber;
         setLayout(null);
@@ -56,8 +58,16 @@ public class Deposit extends JFrame implements ActionListener {
             }else{
                 try {
                     Conn conn = new Conn();
-                    String query = "insert into atm values('"+pinnumber+"', '"+date+"', 'Gửi tiền', '"+number+"')";
-                    conn.s.executeUpdate(query);
+                    String acc_no = "";
+                    String query = "select acc_no from bank_account where pin = '"+pinnumber+"'";
+                    ResultSet rs = conn.s.executeQuery(query);
+                    if(rs.next()) {
+                        acc_no = rs.getString("acc_no");
+                    }
+                    String query1 = "insert into atm values('"+pinnumber+"', '"+date+"', 'Gửi tiền', '"+number+"')";
+                    String query2 = "update bank_account set balance = balance + "+number+" where acc_no = '"+acc_no+"'";
+                    conn.s.executeUpdate(query1);
+                    conn.s.executeUpdate(query2);
                     JOptionPane.showMessageDialog(null, "Tiền gửi thành công là: "+number+" VNĐ");
                     setVisible(false);
                     new Transactions(pinnumber).setVisible(true);

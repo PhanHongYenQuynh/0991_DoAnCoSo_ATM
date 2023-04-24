@@ -7,7 +7,6 @@ import java.awt.event.*;
 
 public class MiniStatement extends JFrame  implements ActionListener{
 
-
     String pinnumber;
     MiniStatement(String pinnumber){
         this.pinnumber = pinnumber;

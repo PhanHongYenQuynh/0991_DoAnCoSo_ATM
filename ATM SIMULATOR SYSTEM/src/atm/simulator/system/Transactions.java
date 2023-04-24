@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Transactions  extends JFrame implements ActionListener {
-    JButton deposit, withdrawl, ministatement, pinchange, fastcash, balanceinquiry, exit;
+    JButton deposit, transfer, ministatement, pinchange, fastcash, balanceinquiry, withdrawal, exit;
     String pinnumber;
     Transactions(String pinnumber){
         this.pinnumber = pinnumber;
@@ -28,12 +28,12 @@ public class Transactions  extends JFrame implements ActionListener {
         deposit.addActionListener(this);
         image.add(deposit);
 
-        withdrawl = new JButton("Rút tiền");
-        withdrawl.setBounds(355, 415, 150, 30);
-        withdrawl.addActionListener(this);
-        image.add(withdrawl);
+        transfer = new JButton("Chuyển tiền");
+        transfer.setBounds(355, 415, 150, 30);
+        transfer.addActionListener(this);
+        image.add(transfer);
 
-        fastcash = new JButton("Rút tiền nhanh");
+        fastcash = new JButton("Rút tiền ");
         fastcash.setBounds(170, 450, 150, 30);
         fastcash.addActionListener(this);
         image.add(fastcash);
@@ -72,9 +72,9 @@ public class Transactions  extends JFrame implements ActionListener {
         } else if (ae.getSource()==deposit) {
             setVisible(false);
             new Deposit(pinnumber).setVisible(true);
-        }else if (ae.getSource()==withdrawl) {
+        }else if (ae.getSource()==transfer) {
             setVisible(false);
-            new Withdrawal(pinnumber).setVisible(true);
+            new Transfer(pinnumber).setVisible(true);
         }else if (ae.getSource()==fastcash) {
             setVisible(false);
             new FastCash(pinnumber).setVisible(true);
@@ -84,6 +84,9 @@ public class Transactions  extends JFrame implements ActionListener {
         }else if (ae.getSource()==pinchange) {
             setVisible(false);
             new PinChange(pinnumber).setVisible(true);
+        }else if (ae.getSource()==ministatement) {
+            setVisible(false);
+            new MiniStatement(pinnumber).setVisible(true);
         }else if (ae.getSource()==ministatement) {
             setVisible(false);
             new MiniStatement(pinnumber).setVisible(true);

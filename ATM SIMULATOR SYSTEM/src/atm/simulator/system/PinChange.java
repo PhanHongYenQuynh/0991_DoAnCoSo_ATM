@@ -89,10 +89,12 @@ public class PinChange extends JFrame implements ActionListener {
                 String query1 = "update atm set pin = '"+rpin+"' where pin = '"+pinnumber+"' ";
                 String query2 = "update login set pin = '"+rpin+"' where pin = '"+pinnumber+"' ";
                 String query3 = "update signupthree set pin = '"+rpin+"' where pin = '"+pinnumber+"' ";
+                String query4 = "update bank_account set pin = '"+rpin+"' where pin = '"+pinnumber+"' ";
 
                 conn.s.executeUpdate(query1);
                 conn.s.executeUpdate(query2);
                 conn.s.executeUpdate(query3);
+                conn.s.executeUpdate(query4);
 
                 JOptionPane.showMessageDialog(null, "Thay đổi mã pin thành công!");
                 setVisible(false);
