@@ -28,13 +28,9 @@ public class BalancEnquiry extends JFrame implements ActionListener {
         Conn conn = new Conn();
         int balance = 0;
         try{
-            ResultSet rs = conn.s.executeQuery("select * from atm where pin= '"+pinnumber+"'");
-            while (rs.next()) {
-                if (rs.getString("type").equals("Gửi tiền")) {
-                    balance += Integer.parseInt(rs.getString("amount"));
-                } else {
-                    balance -= Integer.parseInt(rs.getString("amount"));
-                }
+            ResultSet rs = conn.s.executeQuery("select balance from bank_account where pin= '"+pinnumber+"'");
+            if(rs.next()){
+                balance = rs.getInt("balance");
             }
 
         }catch(Exception e){

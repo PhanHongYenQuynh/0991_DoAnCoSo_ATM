@@ -40,22 +40,29 @@ public class MiniStatement extends JFrame  implements ActionListener{
         }
 
         int balance = 0;
-        Conn conn  = new Conn();
-        try{
+        Conn conn = new Conn();
 
-            ResultSet rs = conn.s.executeQuery("SELECT * FROM atm where pin = '"+pinnumber+"'");
-            while(rs.next()){
-                mini.setText(mini.getText() + "<html>"+rs.getString("date")+ "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + rs.getString("type") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + rs.getString("amount") + "<br><br><html>");
-                if(rs.getString("type").equals("Gửi tiền")){
-                    balance += Integer.parseInt(rs.getString("amount"));
-                }else{
-                    balance -= Integer.parseInt(rs.getString("amount"));
+        try {
+            ResultSet rs = conn.s.executeQuery("SELECT * FROM bank_account where pin = '"+pinnumber+"'");
+
+            if (rs.next()) {
+                // Hiển thị số dư tài khoản
+                balance = rs.getInt("balance");
+                balancee.setText("Số dư tài khoản là: " + balance + "VNĐ");
+
+                // Hiển thị lịch sử giao dịch
+                rs = conn.s.executeQuery("SELECT * FROM atm where pin = '"+pinnumber+"'");
+                while (rs.next()) {
+                    mini.setText(mini.getText() + "<html>" + rs.getString("date") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                            + rs.getString("type") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                            + rs.getString("amount") + "<br><br><html>");
                 }
+            } else {
+                // Không tìm thấy tài khoản
+                balancee.setText("Không tìm thấy tài khoản");
             }
 
-            balancee.setText("Số dư tài khoản là:  "+balance +"VNĐ");
-
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
