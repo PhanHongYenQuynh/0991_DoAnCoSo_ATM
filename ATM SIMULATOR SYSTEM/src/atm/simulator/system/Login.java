@@ -98,7 +98,8 @@ public class Login extends JFrame implements ActionListener {
                    setVisible(false);
                    new Transactions(pinnumber).setVisible(true);
                }else{
-                   JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại Số Tài Khoản và Mã Pin");
+                   JOptionPane.showMessageDialog(null, "Quý khách đã nhập sai mã pin!" +
+                           "\nVui lòng kiểm tra và nhập lại đúng mã pin.");
                }
             }catch(Exception e){
                 System.out.println(e);
