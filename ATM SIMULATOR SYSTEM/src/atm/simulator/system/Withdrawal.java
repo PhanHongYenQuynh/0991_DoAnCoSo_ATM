@@ -108,10 +108,20 @@ public class Withdrawal extends JFrame implements ActionListener {
                         return;
                     }
 
-                    conn.s.executeUpdate("insert into atm values('"+pinnumber+"', '"+date+"', 'Rút tiền', '"+number+"')");
+
                     int amountInt = Integer.parseInt(number);
                     String amountText = numberToWords(amountInt);
                     JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
+
+                    // update account balance in bank_account table
+                    rs = conn.s.executeQuery("select balance from bank_account where pin = '" + pinnumber + "'");
+                    if (rs.next()) {
+                        int currentBalance = rs.getInt("balance");
+                        int newBalance = currentBalance - amountInt;
+                        conn.s.executeUpdate("update bank_account set balance = " + newBalance + " where pin = '" + pinnumber + "'");
+                    }
+
+                    conn.s.executeUpdate("insert into atm values('"+pinnumber+"', '"+date+"', 'Rút tiền', '"+number+"')");
 
                     setVisible(false);
                     new Transactions(pinnumber).setVisible(true);

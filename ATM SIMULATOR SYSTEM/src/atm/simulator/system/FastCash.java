@@ -137,11 +137,18 @@ public class FastCash  extends JFrame implements ActionListener {
                 }
                     Date date = new Date();
 
-                    String query="insert into atm values('"+pinnumber+"', '"+date+"', 'Rút tiền', '"+amount+"')";
-                    conn.s.executeUpdate(query);
+
                     int amountInt = Integer.parseInt(amount);
                     String amountText = numberToWords(amountInt);
                     JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
+                    rs = conn.s.executeQuery("select balance from bank_account where pin = '" + pinnumber + "'");
+                    if (rs.next()) {
+                        int currentBalance = rs.getInt("balance");
+                        int newBalance = currentBalance - amountInt;
+                        conn.s.executeUpdate("update bank_account set balance = " + newBalance + " where pin = '" + pinnumber + "'");
+                    }
+                    String query="insert into atm values('"+pinnumber+"', '"+date+"', 'Rút tiền', '"+amount+"')";
+                    conn.s.executeUpdate(query);
                     setVisible(false);
                     new Transactions(pinnumber).setVisible(true);
             }catch(Exception e){
