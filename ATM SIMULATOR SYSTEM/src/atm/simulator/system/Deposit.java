@@ -49,40 +49,50 @@ public class Deposit extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent ae){
-        if(ae.getSource()==deposit){
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == deposit) {
             String number = amount.getText();
             Date date = new Date();
-            if(number.equals("")){
+            if (number.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn gửi!.");
-            }else{
+            } else {
+                // Kiểm tra số tiền nhập vào không phải số âm
+                try {
+                    int amountInt = Integer.parseInt(number);
+                    if (amountInt <= 0) {
+                        JOptionPane.showMessageDialog(null, "Số tiền gửi không hợp lệ!.");
+                        return;
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Số tiền gửi không hợp lệ!.");
+                    return;
+                }
+
                 try {
                     Conn conn = new Conn();
                     String acc_no = "";
-                    String query = "select acc_no from bank_account where pin = '"+pinnumber+"'";
+                    String query = "select acc_no from bank_account where pin = '" + pinnumber + "'";
                     ResultSet rs = conn.s.executeQuery(query);
-                    if(rs.next()) {
+                    if (rs.next()) {
                         acc_no = rs.getString("acc_no");
                     }
-                    String query1 = "insert into atm values('"+pinnumber+"', '"+date+"', 'Gửi tiền', '"+number+"')";
-                    String query2 = "update bank_account set balance = balance + "+number+" where acc_no = '"+acc_no+"'";
+                    String query1 = "insert into atm values('" + pinnumber + "', '" + date + "', 'Gửi tiền', '" + number + "')";
+                    String query2 = "update bank_account set balance = balance + " + number + " where acc_no = '" + acc_no + "'";
                     conn.s.executeUpdate(query1);
                     conn.s.executeUpdate(query2);
-                    JOptionPane.showMessageDialog(null, "Tiền gửi thành công là: "+number+" VNĐ");
+                    JOptionPane.showMessageDialog(null, "Tiền gửi thành công là: " + number + " VNĐ");
                     setVisible(false);
                     new Transactions(pinnumber).setVisible(true);
-                }catch (Exception e){
+                } catch (Exception e) {
                     System.out.println(e);
                 }
-
             }
-
-        } else if (ae.getSource()==back) {
+        } else if (ae.getSource() == back) {
             setVisible(false);
             new Transactions(pinnumber).setVisible(true);
-
         }
     }
+
     public static void main(String args[]){
         new Deposit("").setVisible(true);
     }

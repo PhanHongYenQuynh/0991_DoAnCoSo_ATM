@@ -89,11 +89,13 @@ public class Withdrawal extends JFrame implements ActionListener {
         try{
             String number = amount.getText();
             Date date = new Date();
+
             if(ae.getSource()==withdrawl){
                 if(number.equals("")){
                     JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn rút!.");
-                }else{
-
+                } else if (Integer.parseInt(number) <= 0) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền hợp lệ!.");
+                } else {
                     Conn conn = new Conn();
                     ResultSet rs = conn.s.executeQuery("SELECT balance FROM bank_account WHERE pin = '" + pinnumber + "'");
                     if (rs.next()) {
@@ -121,16 +123,16 @@ public class Withdrawal extends JFrame implements ActionListener {
                     setVisible(false);
                     new Transactions(pinnumber).setVisible(true);
                 }
-            }else if(ae.getSource()==back){
+            } else if(ae.getSource()==back){
                 setVisible(false);
                 new Transactions(pinnumber).setVisible(true);
             }
-        }catch(Exception e){
+        } catch(Exception e){
             e.printStackTrace();
             System.out.println("error: "+e);
         }
-
     }
+
 
 
     public static void main(String args[]){

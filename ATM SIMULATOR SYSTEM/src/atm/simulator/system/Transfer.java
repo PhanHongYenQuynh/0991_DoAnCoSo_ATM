@@ -120,7 +120,9 @@ public class Transfer extends JFrame implements ActionListener {
                     if (rs.next()) {
                         int senderBalance = rs.getInt("balance");
                         int transferAmountInt = Integer.parseInt(transferAmount);
-                        if (transferAmountInt > senderBalance) {
+                        if (transferAmountInt <= 0) {
+                            JOptionPane.showMessageDialog(null, "Số tiền chuyển khoản không hợp lệ! Vui lòng nhập số tiền hợp lệ.");
+                        }else if (transferAmountInt > senderBalance) {
                             JOptionPane.showMessageDialog(null, "Số dư tài khoản không đủ để chuyển khoản!.");
                         } else {
                             // Update số dư của tài khoản người nhận
