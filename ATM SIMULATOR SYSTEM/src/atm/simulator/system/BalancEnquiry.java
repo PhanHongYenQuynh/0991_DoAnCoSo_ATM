@@ -10,7 +10,8 @@ import java.sql.*;
 public class BalancEnquiry extends JFrame implements ActionListener {
     JButton back;
     String pinnumber;
-    BalancEnquiry(String pinnumber){
+
+    BalancEnquiry(String pinnumber) {
         this.pinnumber = pinnumber;
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/atm.jpg"));
@@ -21,19 +22,19 @@ public class BalancEnquiry extends JFrame implements ActionListener {
         add(image);
 
         back = new JButton("Quay về");
-        back.setBounds(355,520,150,30);
+        back.setBounds(355, 520, 150, 30);
         back.addActionListener(this);
         image.add(back);
 
         Conn conn = new Conn();
         int balance = 0;
-        try{
-            ResultSet rs = conn.s.executeQuery("select balance from bank_account where pin= '"+pinnumber+"'");
-            if(rs.next()){
+        try {
+            ResultSet rs = conn.s.executeQuery("select balance from bank_account where pin= '" + pinnumber + "'");
+            if (rs.next()) {
                 balance = rs.getInt("balance");
             }
 
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
 
@@ -50,7 +51,7 @@ public class BalancEnquiry extends JFrame implements ActionListener {
         image.add(label);
 
         setSize(900, 900);
-        setLocation(300,0);
+        setLocation(300, 0);
         setUndecorated(true);
         setVisible(true);
     }
@@ -60,9 +61,9 @@ public class BalancEnquiry extends JFrame implements ActionListener {
             return " đồng";
         }
 
-        String[] units = { "", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
-                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín" };
-        String[] tens = { "", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi" };
+        String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
+                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"};
+        String[] tens = {"", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
 
         if (number < 0) {
             return "âm " + numberToWords(Math.abs(number));
@@ -90,11 +91,13 @@ public class BalancEnquiry extends JFrame implements ActionListener {
 
         return "số quá lớn";
     }
-    public void actionPerformed(ActionEvent ae){
+
+    public void actionPerformed(ActionEvent ae) {
         setVisible(false);
         new Transactions(pinnumber).setVisible(true);
     }
-    public static  void main(String args[]){
+
+    public static void main(String args[]) {
 
         new BalancEnquiry("").setVisible(true);
     }

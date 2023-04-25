@@ -10,7 +10,8 @@ public class PinChange extends JFrame implements ActionListener {
     JPasswordField pin, repin;
     JButton change, back;
     String pinnumber;
-    PinChange(String pinnumber){
+
+    PinChange(String pinnumber) {
 
         this.pinnumber = pinnumber;
         setLayout(null);
@@ -61,35 +62,41 @@ public class PinChange extends JFrame implements ActionListener {
 
 
         setSize(900, 900);
-        setLocation(300,0);
+        setLocation(300, 0);
         setUndecorated(true);
         setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent ae){
-        if(ae.getSource()==change){
-            try{
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == change) {
+            try {
                 String npin = pin.getText();
                 String rpin = repin.getText();
 
-                if(!npin.equals(rpin)){
+                if (!npin.equals(rpin)) {
                     JOptionPane.showMessageDialog(null, "Quý khách nhập mã pin không trùng nhau. \n Xin vui lòng nhập lại!.");
                     return;
                 }
-                if(npin.equals("")){
+                if (npin.equals("")) {
                     JOptionPane.showMessageDialog(null, "Vui lòng không trống mã pin!");
                     return;
                 }
-                if(rpin.equals("")){
+
+                if (npin.length() != 6) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập đúng 6 số cho.");
+                    return;
+                }
+
+                if (rpin.equals("")) {
                     JOptionPane.showMessageDialog(null, "Vui lòng không bỏ trống nhập lại mã pin!");
                     return;
                 }
 
                 Conn conn = new Conn();
-                String query1 = "update atm set pin = '"+rpin+"' where pin = '"+pinnumber+"' ";
-                String query2 = "update login set pin = '"+rpin+"' where pin = '"+pinnumber+"' ";
-                String query3 = "update signupthree set pin = '"+rpin+"' where pin = '"+pinnumber+"' ";
-                String query4 = "update bank_account set pin = '"+rpin+"' where pin = '"+pinnumber+"' ";
+                String query1 = "update atm set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
+                String query2 = "update login set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
+                String query3 = "update signupthree set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
+                String query4 = "update bank_account set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
 
                 conn.s.executeUpdate(query1);
                 conn.s.executeUpdate(query2);
@@ -100,16 +107,17 @@ public class PinChange extends JFrame implements ActionListener {
                 setVisible(false);
                 new Transactions(rpin).setVisible(true);
 
-            }catch(Exception e){
+            } catch (Exception e) {
                 System.out.println(e);
             }
-        }else{
+        } else {
             setVisible(false);
             new Transactions(pinnumber).setVisible(true);
         }
 
     }
-    public static void main(String args[]){
+
+    public static void main(String args[]) {
         new PinChange("").setVisible(true);
     }
 }

@@ -1,5 +1,6 @@
 package atm.simulator.system;
 /*import com.github.tiennv147.vnconvert.NumberToWords;*/
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -7,10 +8,11 @@ import java.nio.file.FileAlreadyExistsException;
 import java.sql.*;
 import java.util.Date;
 
-public class FastCash  extends JFrame implements ActionListener {
+public class FastCash extends JFrame implements ActionListener {
     JButton onehundred, twohundred, fivehundred, onemillion, twomillion, fivemillion, other, back;
     String pinnumber;
-    FastCash(String pinnumber){
+
+    FastCash(String pinnumber) {
         this.pinnumber = pinnumber;
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/atm.jpg"));
@@ -68,7 +70,7 @@ public class FastCash  extends JFrame implements ActionListener {
 
 
         setSize(900, 900);
-        setLocation(300,0);
+        setLocation(300, 0);
         setUndecorated(true);
         setVisible(true);
 
@@ -79,9 +81,9 @@ public class FastCash  extends JFrame implements ActionListener {
             return " đồng";
         }
 
-        String[] units = { "", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
-                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín" };
-        String[] tens = { "", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi" };
+        String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
+                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"};
+        String[] tens = {"", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
 
         if (number < 0) {
             return "âm " + numberToWords(Math.abs(number));
@@ -111,17 +113,18 @@ public class FastCash  extends JFrame implements ActionListener {
     }
 
 
-    public void actionPerformed(ActionEvent ae){
-        if(ae.getSource()==back){
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == back) {
             setVisible(false);
             new Transactions(pinnumber).setVisible(true);
-        }else if (ae.getSource()==other) {
+        } else if (ae.getSource() == other) {
             setVisible(false);
             new Withdrawal(pinnumber).setVisible(true);
-        }else{
-            String amount = ((JButton)ae.getSource()).getText().substring(0, ((JButton)ae.getSource()).getText().length() - 4);;
+        } else {
+            String amount = ((JButton) ae.getSource()).getText().substring(0, ((JButton) ae.getSource()).getText().length() - 4);
+            ;
             Conn conn = new Conn();
-            try{
+            try {
 
                 ResultSet rs = conn.s.executeQuery("SELECT balance FROM bank_account WHERE pin = '" + pinnumber + "'");
                 if (rs.next()) {
@@ -132,27 +135,27 @@ public class FastCash  extends JFrame implements ActionListener {
                     }
                 }
                 Date date = new Date();
-                    int amountInt = Integer.parseInt(amount);
-                    String amountText = numberToWords(amountInt);
-                    JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
-                    rs = conn.s.executeQuery("select balance from bank_account where pin = '" + pinnumber + "'");
-                    if (rs.next()) {
-                        int currentBalance = rs.getInt("balance");
-                        int newBalance = currentBalance - amountInt;
-                        conn.s.executeUpdate("update bank_account set balance = " + newBalance + " where pin = '" + pinnumber + "'");
-                    }
-                    String query="insert into atm values('"+pinnumber+"', '"+date+"', 'Rút tiền', '"+amount+"')";
-                    conn.s.executeUpdate(query);
-                    setVisible(false);
-                    new Transactions(pinnumber).setVisible(true);
-            }catch(Exception e){
+                int amountInt = Integer.parseInt(amount);
+                String amountText = numberToWords(amountInt);
+                JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
+                rs = conn.s.executeQuery("select balance from bank_account where pin = '" + pinnumber + "'");
+                if (rs.next()) {
+                    int currentBalance = rs.getInt("balance");
+                    int newBalance = currentBalance - amountInt;
+                    conn.s.executeUpdate("update bank_account set balance = " + newBalance + " where pin = '" + pinnumber + "'");
+                }
+                String query = "insert into atm values('" + pinnumber + "', '" + date + "', 'Rút tiền', '" + amount + "')";
+                conn.s.executeUpdate(query);
+                setVisible(false);
+                new Transactions(pinnumber).setVisible(true);
+            } catch (Exception e) {
                 System.out.println(e);
             }
         }
     }
 
 
-    public static  void main(String args[]){
+    public static void main(String args[]) {
 
         new FastCash("").setVisible(true);
     }

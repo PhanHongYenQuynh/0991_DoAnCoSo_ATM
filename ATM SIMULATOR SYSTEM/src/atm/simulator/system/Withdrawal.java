@@ -12,7 +12,8 @@ public class Withdrawal extends JFrame implements ActionListener {
     JTextField amount;
     JButton withdrawl, back;
     String pinnumber;
-    Withdrawal(String pinnumber){
+
+    Withdrawal(String pinnumber) {
         this.pinnumber = pinnumber;
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/atm.jpg"));
@@ -54,9 +55,9 @@ public class Withdrawal extends JFrame implements ActionListener {
             return " đồng";
         }
 
-        String[] units = { "", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
-                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín" };
-        String[] tens = { "", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi" };
+        String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
+                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"};
+        String[] tens = {"", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
 
         if (number < 0) {
             return "âm " + numberToWords(Math.abs(number));
@@ -85,13 +86,13 @@ public class Withdrawal extends JFrame implements ActionListener {
         return "số quá lớn";
     }
 
-    public void actionPerformed(ActionEvent ae){
-        try{
+    public void actionPerformed(ActionEvent ae) {
+        try {
             String number = amount.getText();
             Date date = new Date();
 
-            if(ae.getSource()==withdrawl){
-                if(number.equals("")){
+            if (ae.getSource() == withdrawl) {
+                if (number.equals("")) {
                     JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn rút!.");
                 } else if (Integer.parseInt(number) <= 0) {
                     JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền hợp lệ!.");
@@ -118,24 +119,23 @@ public class Withdrawal extends JFrame implements ActionListener {
                         conn.s.executeUpdate("update bank_account set balance = " + newBalance + " where pin = '" + pinnumber + "'");
                     }
 
-                    conn.s.executeUpdate("insert into atm values('"+pinnumber+"', '"+date+"', 'Rút tiền', '"+number+"')");
+                    conn.s.executeUpdate("insert into atm values('" + pinnumber + "', '" + date + "', 'Rút tiền', '" + number + "')");
 
                     setVisible(false);
                     new Transactions(pinnumber).setVisible(true);
                 }
-            } else if(ae.getSource()==back){
+            } else if (ae.getSource() == back) {
                 setVisible(false);
                 new Transactions(pinnumber).setVisible(true);
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("error: "+e);
+            System.out.println("error: " + e);
         }
     }
 
 
-
-    public static void main(String args[]){
+    public static void main(String args[]) {
         new Withdrawal("").setVisible(true);
     }
 }

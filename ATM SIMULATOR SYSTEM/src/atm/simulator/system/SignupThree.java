@@ -15,7 +15,7 @@ public class SignupThree extends JFrame implements ActionListener {
     JButton submit, cancel;
     String formno;
 
-    SignupThree(String formno){
+    SignupThree(String formno) {
         this.formno = formno;
         setLayout(null);
 
@@ -32,25 +32,25 @@ public class SignupThree extends JFrame implements ActionListener {
         r1 = new JRadioButton("Tài khoản tiết kiệm");
         r1.setFont(new Font("Raleway", Font.BOLD, 16));
         r1.setBackground(Color.WHITE);
-        r1.setBounds(100,180, 250, 20);
+        r1.setBounds(100, 180, 250, 20);
         add(r1);
 
-        r2 = new JRadioButton("Tài khoản tiền gửi cố định");
+        r2 = new JRadioButton("Tài khoản thanh toán");
         r2.setFont(new Font("Raleway", Font.BOLD, 16));
         r2.setBackground(Color.WHITE);
-        r2.setBounds(350,180, 250, 20);
+        r2.setBounds(350, 180, 250, 20);
         add(r2);
 
-        r3 = new JRadioButton("Tài khoản vãng lai");
+        r3 = new JRadioButton("Tài khoản tín dụng");
         r3.setFont(new Font("Raleway", Font.BOLD, 16));
         r3.setBackground(Color.WHITE);
-        r3.setBounds(100,220, 250, 20);
+        r3.setBounds(100, 220, 250, 20);
         add(r3);
 
-        r4 = new JRadioButton("Tài khoản tiền gửi định kỳ");
+        r4 = new JRadioButton("Tài khoản cho vay");
         r4.setFont(new Font("Raleway", Font.BOLD, 16));
         r4.setBackground(Color.WHITE);
-        r4.setBounds(350,220, 260, 20);
+        r4.setBounds(350, 220, 260, 20);
         add(r4);
 
         ButtonGroup groupaccount = new ButtonGroup();
@@ -79,12 +79,12 @@ public class SignupThree extends JFrame implements ActionListener {
         pin.setBounds(100, 370, 200, 30);
         add(pin);
 
-        JLabel pnumber = new JLabel("XXXX");
+        JLabel pnumber = new JLabel("XXXXXX");
         pnumber.setFont(new Font("Raleway", Font.BOLD, 22));
         pnumber.setBounds(330, 370, 300, 30);
         add(pnumber);
 
-        JLabel pindetail = new JLabel("Vui lòng nhập đủ 4 số");
+        JLabel pindetail = new JLabel("Vui lòng nhập đủ 6 số");
         pindetail.setFont(new Font("Raleway", Font.BOLD, 12));
         pindetail.setBounds(100, 400, 300, 20);
         add(pindetail);
@@ -159,78 +159,79 @@ public class SignupThree extends JFrame implements ActionListener {
         getContentPane().setBackground(Color.WHITE);
 
         setSize(850, 820);
-        setLocation(350,0);
+        setLocation(350, 0);
         setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent ae){
-        if(ae.getSource()==submit){
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == submit) {
             String accountType = null;
-            if(r1.isSelected()){
+            if (r1.isSelected()) {
                 accountType = "Tài khoản tiết kiệm";
-            }else if (r2.isSelected()){
-                accountType = "Tài khoản tiền gửi cố định";
-            }else if (r3.isSelected()){
-                accountType = "Tài khoản vãng lai";
-            }else if (r4.isSelected()){
-                accountType = "Tài khoản tiền gửi định kỳ";
+            } else if (r2.isSelected()) {
+                accountType = "Tài khoản thanh toán";
+            } else if (r3.isSelected()) {
+                accountType = "Tài khoản tín dụng";
+            } else if (r4.isSelected()) {
+                accountType = "Tài khoản cho vay";
             }
 
             Random ran = new Random();
-            String cardnumber = ""+Math.abs((ran.nextLong() % 90000000L)+ 5040936000000000L);
-            String pinnumber = ""+Math.abs((ran.nextLong() % 9000L)+ 1000L);
+            String cardnumber = "" + Math.abs((ran.nextLong() % 90000000L) + 5040936000000000L);
+            String pinnumber = "" + Math.abs((ran.nextLong() % 900000L) + 100000L);
 
             String facility = "";
-            if(c1.isSelected()){
+            if (c1.isSelected()) {
                 facility = facility + " ATM Card";
-            } else if(c2.isSelected()){
+            } else if (c2.isSelected()) {
                 facility = facility + " Internet Banking";
-            } else if(c3.isSelected()){
+            } else if (c3.isSelected()) {
                 facility = facility + " Mobile Banking";
-            } else if(c4.isSelected()){
+            } else if (c4.isSelected()) {
                 facility = facility + " EMAIL & SMS Alerts";
-            } else if(c5.isSelected()){
+            } else if (c5.isSelected()) {
                 facility = facility + " Cheque Book";
-            } else if(c6.isSelected()){
+            } else if (c6.isSelected()) {
                 facility = facility + " E-Statement";
             }
 
 
-            int balance=0;
-            int wrong_attempts=0;
+            int balance = 0;
+            int wrong_attempts = 0;
             Timestamp lockedUntil = null;
 
-            try{
-                if(accountType.equals("")){
+            try {
+                if (accountType.equals("")) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn loại tài khoản");
-                }else{
+                } else {
                     Conn conn = new Conn();
-                    String query1 = "insert into signupthree values('"+formno+"','"+accountType+"','"+cardnumber+"','"+pinnumber+"','"+facility+"')";
-                    String query2 = "insert into login values('"+formno+"','"+cardnumber+"','"+pinnumber+"', '"+wrong_attempts+"',"+ (lockedUntil == null ? "null" : "'" + lockedUntil + "'") + ")";
+                    String query1 = "insert into signupthree values('" + formno + "','" + accountType + "','" + cardnumber + "','" + pinnumber + "','" + facility + "')";
+                    String query2 = "insert into login values('" + formno + "','" + cardnumber + "','" + pinnumber + "', '" + wrong_attempts + "'," + (lockedUntil == null ? "null" : "'" + lockedUntil + "'") + ")";
                     String query3 = "insert into bank_account values('" + cardnumber + "','" + pinnumber + "','" + balance + "')";
                     conn.s.executeUpdate(query1);
                     conn.s.executeUpdate(query2);
                     conn.s.executeUpdate(query3);
 
 
-                    JOptionPane.showMessageDialog(null, "STK:" + cardnumber + "\n Pin:"+ pinnumber);
+                    JOptionPane.showMessageDialog(null, "STK:" + cardnumber + "\n Pin:" + pinnumber);
 
                     setVisible(false);
                     new Deposit(pinnumber).setVisible(false);
 
                 }
 
-            }catch(Exception e){
+            } catch (Exception e) {
                 System.out.println(e);
             }
 
 
-        }else if (ae.getSource()==cancel){
+        } else if (ae.getSource() == cancel) {
             setVisible(false);
             new Login().setVisible(true);
         }
     }
-    public static void main(String args[]){
+
+    public static void main(String args[]) {
         new SignupThree("").setVisible(true);
     }
 }

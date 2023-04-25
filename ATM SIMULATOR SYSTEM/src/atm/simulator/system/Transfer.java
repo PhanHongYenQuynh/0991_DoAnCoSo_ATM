@@ -72,9 +72,9 @@ public class Transfer extends JFrame implements ActionListener {
             return " đồng";
         }
 
-        String[] units = { "", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
-                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín" };
-        String[] tens = { "", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi" };
+        String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
+                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"};
+        String[] tens = {"", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
 
         if (number < 0) {
             return "âm " + numberToWords(Math.abs(number));
@@ -122,7 +122,7 @@ public class Transfer extends JFrame implements ActionListener {
                         int transferAmountInt = Integer.parseInt(transferAmount);
                         if (transferAmountInt <= 0) {
                             JOptionPane.showMessageDialog(null, "Số tiền chuyển khoản không hợp lệ! Vui lòng nhập số tiền hợp lệ.");
-                        }else if (transferAmountInt > senderBalance) {
+                        } else if (transferAmountInt > senderBalance) {
                             JOptionPane.showMessageDialog(null, "Số dư tài khoản không đủ để chuyển khoản!.");
                         } else {
                             // Update số dư của tài khoản người nhận

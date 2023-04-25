@@ -10,12 +10,13 @@ public class Login extends JFrame implements ActionListener {
     JButton login, signup, clear;
     JTextField cardTextField;
     JPasswordField pinTextField;
-  /*  int numAttempts = 0;*/
-    Login(){
+
+    /*  int numAttempts = 0;*/
+    Login() {
         setTitle("AUTOMATED TELLER MACHINE");
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/logo.png"));
-        Image i2 = i1.getImage().getScaledInstance(100,100,Image.SCALE_DEFAULT);
+        Image i2 = i1.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT);
         ImageIcon i3 = new ImageIcon(i2);
         JLabel label = new JLabel(i3);
         label.setBounds(70, 10, 100, 100);
@@ -26,7 +27,6 @@ public class Login extends JFrame implements ActionListener {
         text.setFont(new Font("Osward", Font.BOLD, 38));
         text.setBounds(200, 40, 430, 40);
         add(text);
-
 
 
         JLabel cardno = new JLabel("STK: ");
@@ -92,7 +92,7 @@ public class Login extends JFrame implements ActionListener {
             Conn conn = new Conn();
             String cardnumber = cardTextField.getText();
             String pinnumber = pinTextField.getText();
-            String query = "SELECT * FROM login WHERE cardnumber = '"+cardnumber+"' AND pin = '"+pinnumber+"'";
+            String query = "SELECT * FROM login WHERE cardnumber = '" + cardnumber + "' AND pin = '" + pinnumber + "'";
             try {
                 ResultSet rs = conn.s.executeQuery(query);
                 if (rs.next()) {
@@ -142,7 +142,7 @@ public class Login extends JFrame implements ActionListener {
         }
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
         new Login();
     }
 }

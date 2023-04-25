@@ -1,5 +1,7 @@
 package atm.simulator.system;
+
 import com.toedter.calendar.JDateChooser;
+
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.*;
@@ -8,12 +10,15 @@ import javax.swing.text.MaskFormatter;
 import javax.swing.text.NumberFormatter;
 import java.text.ParseException;
 import java.util.*;
+
 import com.toedter.calendar.JDateChooser;
+
 import java.awt.event.*;
+
 public class SignupTwo extends JFrame implements ActionListener {
 
 
-    JTextField  wherecicTextField;
+    JTextField wherecicTextField;
     JFormattedTextField cicFormattedTextField, taxFormnattedTextField;
 
     JButton next;
@@ -21,7 +26,8 @@ public class SignupTwo extends JFrame implements ActionListener {
     JComboBox religion, nationality, occupation, education, income;
     JDateChooser dataChooser;
     String formno;
-    SignupTwo(String formno){
+
+    SignupTwo(String formno) {
 
         this.formno = formno;
         setLayout(null);
@@ -38,12 +44,11 @@ public class SignupTwo extends JFrame implements ActionListener {
         Religion.setBounds(100, 140, 130, 30);
         add(Religion);
 
-        String valReligion[]= {"Đạo Phật","Đạo Hindu", "Đạo Hồi", "Đạo Do Thái", "Đạo chúa", "Khác"};
+        String valReligion[] = {"Đạo Phật", "Đạo Hindu", "Đạo Hồi", "Đạo Do Thái", "Đạo chúa", "Khác"};
         religion = new JComboBox(valReligion);
         religion.setBounds(300, 140, 400, 30);
         religion.setBackground(Color.WHITE);
         add(religion);
-
 
 
         JLabel Nationality = new JLabel("Quốc tịch: ");
@@ -51,16 +56,16 @@ public class SignupTwo extends JFrame implements ActionListener {
         Nationality.setBounds(100, 190, 200, 30);
         add(Nationality);
 
-        String valNationality[]= {"Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
-                "Austria", "Azerbaijan", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium","Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina",
-                "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia","Cameroon", "Canada", "Chad", "Chile", "China", "Colombia", "Comoros",
-                "Congo", "Costa Rica", "Denmark", "Djibouti", "Dominica", "East Timor", "Ecuador","Egypt", "El Salvador", "England", "Eritrea", "Estonia", "Ethiopia", "Fiji",
-                "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Greece","Haiti", "Honduras", "Hong Kong", "Hungary", "India", "Indonesia", "Iran",
-                "Iraq", "Ireland", "Israel", "Italy", "Ivory Coast", "Jamaica", "Japan","Kazakhstan", "Kenya", "Kiribati", "Laos", "Latvia", "Lebanon", "Lesotho",
-                "Liberia", "Libya", "Liechtenstein", "Luxembourg", "Macao", "Macedonia", "Madagascar","Malawi", "Mexico", "Moldova", "Monaco", "Namibia", "Nauru", "Nepal",
-                "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "Northern Ireland", "Pakistan","Palestine", "Paraguay", "Peru", "Poland", "Portugal", "Puerto Rico", "Qatar",
-                "Romania", "Russia", "Rwanda", "Samoa", "Saudi Arabia", "Scotland", "Singapore","South Korea", "Spain", "Sri Lanka", "Switzerland", "Taiwan", "The Czech Republic", "The Philippines",
-                "The Unites States of America (USA)", "Turkey", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela","Vietnam", "Wales", "Yemen", "Zambia", "Zimbabwe",
+        String valNationality[] = {"Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
+                "Austria", "Azerbaijan", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina",
+                "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Chad", "Chile", "China", "Colombia", "Comoros",
+                "Congo", "Costa Rica", "Denmark", "Djibouti", "Dominica", "East Timor", "Ecuador", "Egypt", "El Salvador", "England", "Eritrea", "Estonia", "Ethiopia", "Fiji",
+                "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Greece", "Haiti", "Honduras", "Hong Kong", "Hungary", "India", "Indonesia", "Iran",
+                "Iraq", "Ireland", "Israel", "Italy", "Ivory Coast", "Jamaica", "Japan", "Kazakhstan", "Kenya", "Kiribati", "Laos", "Latvia", "Lebanon", "Lesotho",
+                "Liberia", "Libya", "Liechtenstein", "Luxembourg", "Macao", "Macedonia", "Madagascar", "Malawi", "Mexico", "Moldova", "Monaco", "Namibia", "Nauru", "Nepal",
+                "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "Northern Ireland", "Pakistan", "Palestine", "Paraguay", "Peru", "Poland", "Portugal", "Puerto Rico", "Qatar",
+                "Romania", "Russia", "Rwanda", "Samoa", "Saudi Arabia", "Scotland", "Singapore", "South Korea", "Spain", "Sri Lanka", "Switzerland", "Taiwan", "The Czech Republic", "The Philippines",
+                "The Unites States of America (USA)", "Turkey", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Wales", "Yemen", "Zambia", "Zimbabwe",
         };
 
         nationality = new JComboBox(valNationality);
@@ -73,7 +78,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         Income.setBounds(100, 240, 200, 30);
         add(Income);
 
-        String valCard[]= {"Không","<1.50.000","<2.50.000","<5.00.000",">=10.00.000","Trên 10.00.000"};
+        String valCard[] = {"Không", "<1.50.000", "<2.50.000", "<5.00.000", "<=10.00.000", "Trên 10.00.000"};
         income = new JComboBox(valCard);
         income.setBounds(300, 240, 400, 30);
         income.setBackground(Color.WHITE);
@@ -84,7 +89,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         Education.setBounds(100, 290, 200, 30);
         add(Education);
 
-        String educationValues[]= {"Không trình độ","12/12", "Đại học", "Cao Đẳng", "Tiến Sĩ", "Khác"};
+        String educationValues[] = {"Không trình độ", "12/12", "Đại học", "Cao Đẳng", "Tiến Sĩ", "Khác"};
         education = new JComboBox(educationValues);
         education.setBounds(300, 290, 400, 30);
         education.setBackground(Color.WHITE);
@@ -95,7 +100,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         Occupation.setBounds(100, 350, 200, 30);
         add(Occupation);
 
-        String occupationValues[]= {"Công nhân","Nhân viên","Tự kinh doanh", "Doanh nhân", "Sinh viên", "Nghỉ hưu", "Khác"};
+        String occupationValues[] = {"Công nhân", "Nhân viên", "Tự kinh doanh", "Doanh nhân", "Sinh viên", "Nghỉ hưu", "Khác"};
         occupation = new JComboBox(occupationValues);
         occupation.setBounds(300, 350, 400, 30);
         occupation.setBackground(Color.WHITE);
@@ -178,7 +183,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         add(Senior);
 
         syes = new JRadioButton("Phải");
-        syes.setBounds(300,625,120,30);
+        syes.setBounds(300, 625, 120, 30);
         add(syes);
 
         sno = new JRadioButton("Không");
@@ -197,7 +202,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         add(existaccount);
 
         eyes = new JRadioButton("Có");
-        eyes.setBounds(300,690,120,30);
+        eyes.setBounds(300, 690, 120, 30);
         add(eyes);
 
         eno = new JRadioButton("Chưa");
@@ -214,8 +219,8 @@ public class SignupTwo extends JFrame implements ActionListener {
         next.setForeground(Color.WHITE);
         next.setOpaque(true);
         next.setBorderPainted(false);
-        next.setFont(new Font("Raleway",Font.BOLD, 14));
-        next.setBounds(620,740,120,30);
+        next.setFont(new Font("Raleway", Font.BOLD, 14));
+        next.setBounds(620, 740, 120, 30);
         next.addActionListener(this);
         add(next);
 
@@ -226,27 +231,27 @@ public class SignupTwo extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent ae){
+    public void actionPerformed(ActionEvent ae) {
 
         String sreligion = (String) religion.getSelectedItem();
         String snationality = (String) nationality.getSelectedItem();
         String sincome = (String) income.getSelectedItem();
         String seducation = (String) education.getSelectedItem();
         String soccupation = (String) occupation.getSelectedItem();
-        String sdatecic = ((JTextField)dataChooser.getDateEditor().getUiComponent()).getText();
+        String sdatecic = ((JTextField) dataChooser.getDateEditor().getUiComponent()).getText();
 
         String seniorcitizen = null;
-        if(syes.isSelected()){
+        if (syes.isSelected()) {
             seniorcitizen = "Phải";
 
-        }else if(sno.isSelected()){
+        } else if (sno.isSelected()) {
             seniorcitizen = "Không";
         }
 
         String exisitingaccount = null;
-        if(eyes.isSelected()){
+        if (eyes.isSelected()) {
             exisitingaccount = "Có";
-        } else if (eno.isSelected()){
+        } else if (eno.isSelected()) {
             exisitingaccount = "Chưa";
         }
 
@@ -255,7 +260,7 @@ public class SignupTwo extends JFrame implements ActionListener {
         String cic = cicFormattedTextField.getValue() != null ? cicFormattedTextField.getValue().toString() : "";
 
         try {
-            if(tax.equals("")) {
+            if (tax.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập mã số thuê.");
             } else if (cic.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng điền căn cước công dân. ");
@@ -263,9 +268,9 @@ public class SignupTwo extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập ngày cấp căn cước công dân. ");
             } else if (where.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập nơi cấp căn cước công dân. ");
-            }else{
+            } else {
                 Conn c = new Conn();
-                String query="insert into signuptwo values('"+formno+"', '"+sreligion+"', '"+snationality+"', '"+sincome+"', '"+seducation+"', '"+soccupation+"', '"+tax+"', '"+cic+"', '"+sdatecic+"','"+where+"','"+seniorcitizen+"', '"+exisitingaccount+"')";
+                String query = "insert into signuptwo values('" + formno + "', '" + sreligion + "', '" + snationality + "', '" + sincome + "', '" + seducation + "', '" + soccupation + "', '" + tax + "', '" + cic + "', '" + sdatecic + "','" + where + "','" + seniorcitizen + "', '" + exisitingaccount + "')";
                 c.s.executeUpdate(query);
 
                 //Signup3 Object
@@ -274,12 +279,13 @@ public class SignupTwo extends JFrame implements ActionListener {
             }
 
 
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
 
     }
-    public static void main(String args[]){
+
+    public static void main(String args[]) {
         new SignupTwo("").setVisible(true);
     }
 }

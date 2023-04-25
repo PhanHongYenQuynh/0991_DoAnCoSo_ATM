@@ -12,7 +12,7 @@ public class Deposit extends JFrame implements ActionListener {
     JButton deposit, back;
     String pinnumber;
 
-    Deposit(String pinnumber){
+    Deposit(String pinnumber) {
         this.pinnumber = pinnumber;
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/atm.jpg"));
@@ -93,7 +93,7 @@ public class Deposit extends JFrame implements ActionListener {
         }
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
         new Deposit("").setVisible(true);
     }
 }

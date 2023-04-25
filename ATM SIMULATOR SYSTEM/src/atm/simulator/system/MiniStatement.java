@@ -5,10 +5,11 @@ import java.awt.*;
 import java.sql.*;
 import java.awt.event.*;
 
-public class MiniStatement extends JFrame  implements ActionListener{
+public class MiniStatement extends JFrame implements ActionListener {
 
     String pinnumber;
-    MiniStatement(String pinnumber){
+
+    MiniStatement(String pinnumber) {
         this.pinnumber = pinnumber;
         setTitle("In Sao Kê");
 
@@ -30,13 +31,13 @@ public class MiniStatement extends JFrame  implements ActionListener{
         balancee.setBounds(20, 750, 300, 20);
         add(balancee);
 
-        try{
+        try {
             Conn c = new Conn();
-            ResultSet rs = c.s.executeQuery("select * from login where pin = '"+pinnumber+"'");
-            while(rs.next()){
+            ResultSet rs = c.s.executeQuery("select * from login where pin = '" + pinnumber + "'");
+            while (rs.next()) {
                 card.setText("Card number:    " + rs.getString("cardnumber").substring(0, 4) + "XXXXXXXX" + rs.getString("cardnumber").substring(12));
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
 
@@ -44,7 +45,7 @@ public class MiniStatement extends JFrame  implements ActionListener{
         Conn conn = new Conn();
 
         try {
-            ResultSet rs = conn.s.executeQuery("SELECT * FROM bank_account where pin = '"+pinnumber+"'");
+            ResultSet rs = conn.s.executeQuery("SELECT * FROM bank_account where pin = '" + pinnumber + "'");
 
             if (rs.next()) {
                 // Hiển thị số dư tài khoản
@@ -52,7 +53,7 @@ public class MiniStatement extends JFrame  implements ActionListener{
                 balancee.setText("Số dư tài khoản là: " + balance + "VNĐ");
 
                 // Hiển thị lịch sử giao dịch
-                rs = conn.s.executeQuery("SELECT * FROM atm where pin = '"+pinnumber+"'");
+                rs = conn.s.executeQuery("SELECT * FROM atm where pin = '" + pinnumber + "'");
                 while (rs.next()) {
                     mini.setText(mini.getText() + "<html>" + rs.getString("date") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
                             + rs.getString("type") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
@@ -68,24 +69,25 @@ public class MiniStatement extends JFrame  implements ActionListener{
         }
 
         String amountText = numberToWords(balance);
-        JLabel label = new JLabel("Số dư bằng chữ: \n"+ amountText);
+        JLabel label = new JLabel("Số dư bằng chữ: \n" + amountText);
         label.setBounds(20, 800, 600, 30);
         add(label);
 
-        mini.setBounds(20,45,400,800);
+        mini.setBounds(20, 45, 400, 800);
         setSize(550, 1000);
         setLocation(20, 20);
         getContentPane().setBackground(Color.WHITE);
         setVisible(true);
     }
+
     public static String numberToWords(int number) {
         if (number == 0) {
             return " đồng";
         }
 
-        String[] units = { "", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
-                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín" };
-        String[] tens = { "", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi" };
+        String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
+                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"};
+        String[] tens = {"", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
 
         if (number < 0) {
             return "âm " + numberToWords(Math.abs(number));
@@ -113,10 +115,12 @@ public class MiniStatement extends JFrame  implements ActionListener{
 
         return "số quá lớn";
     }
-    public void actionPerformed(ActionEvent ae){
+
+    public void actionPerformed(ActionEvent ae) {
         this.setVisible(false);
     }
-    public static void main(String args[]){
+
+    public static void main(String args[]) {
         new MiniStatement("").setVisible(true);
     }
 }

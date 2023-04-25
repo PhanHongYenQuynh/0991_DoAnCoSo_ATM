@@ -6,8 +6,11 @@ import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.text.ParseException;
 import java.util.*;
+
 import com.toedter.calendar.JDateChooser;
+
 import java.awt.event.*;
+
 public class SignupOne extends JFrame implements ActionListener {
 
     long random;
@@ -18,7 +21,8 @@ public class SignupOne extends JFrame implements ActionListener {
     JButton next;
     JRadioButton male, female, other, married, unmarried;
     JDateChooser dataChooser;
-    SignupOne(){
+
+    SignupOne() {
 
         setLayout(null);
         Random ran = new Random();
@@ -100,7 +104,7 @@ public class SignupOne extends JFrame implements ActionListener {
         add(gender);
 
         male = new JRadioButton("Nam");
-        male.setBounds(300,390,120,30);
+        male.setBounds(300, 390, 120, 30);
         add(male);
 
         female = new JRadioButton("Nữ");
@@ -127,7 +131,7 @@ public class SignupOne extends JFrame implements ActionListener {
         add(marital);
 
         married = new JRadioButton("Đã kết hôn");
-        married.setBounds(300,490,150,30);
+        married.setBounds(300, 490, 150, 30);
         add(married);
 
         unmarried = new JRadioButton("Chưa kết hôn");
@@ -188,8 +192,8 @@ public class SignupOne extends JFrame implements ActionListener {
         next.setForeground(Color.WHITE);
         next.setOpaque(true);
         next.setBorderPainted(false);
-        next.setFont(new Font("Raleway",Font.BOLD, 14));
-        next.setBounds(620,740,120,30);
+        next.setFont(new Font("Raleway", Font.BOLD, 14));
+        next.setBounds(620, 740, 120, 30);
         next.addActionListener(this);
         add(next);
 
@@ -200,28 +204,28 @@ public class SignupOne extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent ae){
+    public void actionPerformed(ActionEvent ae) {
         String formno = "" + random; //long
         String name = nameTextField.getText(); //setText
         String fname = fnameTextField.getText();
         String mname = mnameTextField.getText();
-        String dob = ((JTextField)dataChooser.getDateEditor().getUiComponent()).getText();
+        String dob = ((JTextField) dataChooser.getDateEditor().getUiComponent()).getText();
         String gender = null;
-        if(male.isSelected()){
+        if (male.isSelected()) {
             gender = "Nam";
 
-        }else if(female.isSelected()){
+        } else if (female.isSelected()) {
             gender = "Nữ";
         }
         String email = emailTextField.getText();
 
         String marital = null;
-        if(married.isSelected()){
+        if (married.isSelected()) {
             marital = "Đã kết hôn";
-        } else if (unmarried.isSelected()){
+        } else if (unmarried.isSelected()) {
             marital = "Chưa kết hôn";
 
-        } else if (other.isSelected()){
+        } else if (other.isSelected()) {
             marital = "Khách";
         }
 
@@ -232,38 +236,37 @@ public class SignupOne extends JFrame implements ActionListener {
         String phone = phoneFormattedTextField.getValue() != null ? phoneFormattedTextField.getValue().toString() : "";
         try {
 
-            if(name.equals("")){
+            if (name.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng không bỏ trống họ tên.");
-            }else if (phone.equals("")) {
+            } else if (phone.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng điền số điện thoại.");
             } else if (fname.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng không bỏ trống tên cha.");
             } else if (mname.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng không bỏ trống tên mẹ.");
-            }else if (dob.equals("")) {
+            } else if (dob.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng không bỏ trống ngày sinh.");
-            }else if (address.equals("")) {
+            } else if (address.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập địa chỉ.");
-            }else if (ward.equals("")) {
+            } else if (ward.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập tên phường.");
-            }else if (city.equals("")) {
+            } else if (city.equals("")) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập tên Tỉnh/Tp.");
-            }
-
-            else{
+            } else {
                 Conn c = new Conn();
-                String query="insert into signup values('"+formno+"', '"+name+"', '"+phone+"','"+fname+"', '"+mname+"','"+dob+"', '"+gender+"', '"+email+"', '"+marital+"', '"+address+"', '"+ward+"', '"+pin+"', '"+city+"')";
+                String query = "insert into signup values('" + formno + "', '" + name + "', '" + phone + "','" + fname + "', '" + mname + "','" + dob + "', '" + gender + "', '" + email + "', '" + marital + "', '" + address + "', '" + ward + "', '" + pin + "', '" + city + "')";
                 c.s.executeUpdate(query);
 
                 setVisible(false);
                 new SignupTwo(formno).setVisible(true);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
-    public static void main(String args[]){
+
+    public static void main(String args[]) {
         new SignupOne();
     }
 }
