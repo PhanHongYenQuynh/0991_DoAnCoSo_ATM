@@ -83,7 +83,7 @@ public class PinChange extends JFrame implements ActionListener {
                 }
 
                 if (npin.length() != 6) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng nhập đúng 6 số cho.");
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập đúng 6 số.");
                     return;
                 }
 

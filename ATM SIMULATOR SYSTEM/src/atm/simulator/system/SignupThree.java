@@ -177,8 +177,11 @@ public class SignupThree extends JFrame implements ActionListener {
             }
 
             Random ran = new Random();
-            String cardnumber = "" + Math.abs((ran.nextLong() % 90000000L) + 5040936000000000L);
+            String cardnumber = "" + Math.abs((ran.nextLong() % 90000000L) + 970422000000000L);
             String pinnumber = "" + Math.abs((ran.nextLong() % 900000L) + 100000L);
+
+            /*String visanumber = "" + Math.abs((ran.nextLong() % 90000000L) + 408904000000000L);
+            String pvisanumber = "" + Math.abs((ran.nextLong() % 900000L) + 1000L);*/
 
             String facility = "";
             if (c1.isSelected()) {
