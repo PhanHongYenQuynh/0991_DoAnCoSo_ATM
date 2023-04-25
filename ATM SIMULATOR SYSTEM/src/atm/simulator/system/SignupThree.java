@@ -185,19 +185,28 @@ public class SignupThree extends JFrame implements ActionListener {
 
             String facility = "";
             if (c1.isSelected()) {
-                facility = facility + " ATM Card";
-            } else if (c2.isSelected()) {
-                facility = facility + " Internet Banking";
-            } else if (c3.isSelected()) {
-                facility = facility + " Mobile Banking";
-            } else if (c4.isSelected()) {
-                facility = facility + " EMAIL & SMS Alerts";
-            } else if (c5.isSelected()) {
-                facility = facility + " Cheque Book";
-            } else if (c6.isSelected()) {
-                facility = facility + " E-Statement";
+                facility = facility + "ATM Card,";
+            }
+            if (c2.isSelected()) {
+                facility = facility + "Internet Banking,";
+            }
+            if (c3.isSelected()) {
+                facility = facility + "Mobile Banking,";
+            }
+            if (c4.isSelected()) {
+                facility = facility + "EMAIL & SMS Alerts,";
+            }
+            if (c5.isSelected()) {
+                facility = facility + "Cheque Book,";
+            }
+            if (c6.isSelected()) {
+                facility = facility + "E-Statement,";
             }
 
+            // Loại bỏ dấu phẩy cuối cùng
+            if (facility.endsWith(",")) {
+                facility = facility.substring(0, facility.length() - 1);
+            }
 
             int balance = 0;
             int wrong_attempts = 0;
