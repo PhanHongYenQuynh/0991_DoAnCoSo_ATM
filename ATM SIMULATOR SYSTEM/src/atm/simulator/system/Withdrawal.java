@@ -104,7 +104,6 @@ public class Withdrawal extends JFrame implements ActionListener {
                         }
                     }
 
-
                     int amountInt = Integer.parseInt(number);
                     String amountText = numberToWords(amountInt);
                     JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
