@@ -10,8 +10,8 @@ import java.sql.SQLException;
 public class SMS {
     public static final String ACCOUNT_SID = "NULL";
     public static final String AUTH_TOKEN = "NULL";
-    public static final String TO_NUMBER = "+84986556949";
-    public static final String FROM_NUMBER = "+16315576245";
+    public static final String TO_NUMBER = "+NULL";
+    public static final String FROM_NUMBER = "+NULL";
 
     public static void sendSMS(String messageBody) {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);

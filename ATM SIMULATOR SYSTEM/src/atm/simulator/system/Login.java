@@ -133,11 +133,16 @@ public class Login extends JFrame implements ActionListener {
                         // Khoá tài khoản vĩnh viễn nếu nhập sai quá nhiều lần
                         query = "UPDATE login SET locked_until = CURRENT_TIMESTAMP + INTERVAL 10 YEAR WHERE cardnumber = '" + cardnumber + "'";
                         conn.s.executeUpdate(query);
+
+                        //Lấy số thẻ
+                        query = "SELECT * FROM login WHERE cardnumber = '" + cardnumber + "'";
+                        rs = conn.s.executeQuery(query);
+                        rs.next();
                         String cardnumberr = rs.getString("cardnumber");
                         String maskedCardnumber = ( cardnumberr.substring(0, 4) + "XXXXXXXX" + cardnumberr.substring(12));
                         String messageBody = "NGÂN HÀNG HUETCH BANK\n ---XIN THÔNG BÁO--- \nQuý khách có số tài khoản: " + maskedCardnumber + " đã bị khoá do nhập sai mã pin quá 5 lần \n" + "Xin quý khách vui lòng liên hệ số hotline: 0976554323.";
                         SMS.sendSMS(messageBody);
-                        JOptionPane.showMessageDialog(null, "Tài khoản của bạn đã bị khóa vĩnh viễn.\nVui lòng liên hệ với số hotline để được hỗ trợ!");
+                        JOptionPane.showMessageDialog(null, "Tài khoản của bạn đã bị khóa.\nVui lòng liên hệ với số hotline để được hỗ trợ!");
                         return;
                     } else if (wrongAttempts >= 3) {
                         // Khoá tài khoản trong 10 phút nếu nhập sai 3 lần
