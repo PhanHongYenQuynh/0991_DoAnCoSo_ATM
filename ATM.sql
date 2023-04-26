@@ -64,7 +64,7 @@ create table atm(
 
 CREATE TABLE bank_account (
     acc_no  varchar(25),
-    pin VARCHAR(5),
+    pin VARCHAR(10),
     balance INT
 );
 
