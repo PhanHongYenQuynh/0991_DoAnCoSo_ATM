@@ -54,7 +54,7 @@ public class SignupOne extends JFrame implements ActionListener {
         add(phone);
 
         try {
-            MaskFormatter formatter = new MaskFormatter("####-###-###");
+            MaskFormatter formatter = new MaskFormatter("##########");
             formatter.setPlaceholderCharacter('_');
             formatter.setValidCharacters("0123456789");
             phoneFormattedTextField = new JFormattedTextField(formatter);

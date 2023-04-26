@@ -5,6 +5,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+
 public class Login extends JFrame implements ActionListener {
 
     JButton login, signup, clear;
@@ -84,6 +89,7 @@ public class Login extends JFrame implements ActionListener {
         setLocation(350, 200);
     }
 
+
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == clear) {
             cardTextField.setText("");
@@ -93,6 +99,11 @@ public class Login extends JFrame implements ActionListener {
             String cardnumber = cardTextField.getText();
             String pinnumber = pinTextField.getText();
             String query = "SELECT * FROM login WHERE cardnumber = '" + cardnumber + "' AND pin = '" + pinnumber + "'";
+            if (cardnumber.equals("") || pinnumber.equals("")) {
+                JOptionPane.showMessageDialog(null, "Vui lòng điền thông tin đầy đủ!");
+                return;
+            }
+
             try {
                 ResultSet rs = conn.s.executeQuery(query);
                 if (rs.next()) {
@@ -112,12 +123,20 @@ public class Login extends JFrame implements ActionListener {
                     Timestamp lockedUntil = rs.getTimestamp("locked_until");
 
                     if (lockedUntil != null && lockedUntil.after(new Timestamp(System.currentTimeMillis()))) {
-                        JOptionPane.showMessageDialog(null, "Tài khoản của bạn đã bị khóa trong 10 phút.");
+                        String cardnumberr = rs.getString("cardnumber");
+                        String maskedCardnumber = ( cardnumberr.substring(0, 4) + "XXXXXXXX" + cardnumberr.substring(12));
+                        String messageBody = ("NGÂN HÀNG HUETCH BANK\n ---XIN THÔNG BÁO--- \nQuý khác có số tài khoản: " + maskedCardnumber + " đã bị khoá do nhập sai mã pin quá nhiều lần \n" + "Xin quý khác vui lòng thử lại sau 10 phút.");
+                        SMS.sendSMS(messageBody);
+                        JOptionPane.showMessageDialog(null, messageBody);
                         return;
                     } else if (wrongAttempts >= 5) {
                         // Khoá tài khoản vĩnh viễn nếu nhập sai quá nhiều lần
                         query = "UPDATE login SET locked_until = CURRENT_TIMESTAMP + INTERVAL 10 YEAR WHERE cardnumber = '" + cardnumber + "'";
                         conn.s.executeUpdate(query);
+                        String cardnumberr = rs.getString("cardnumber");
+                        String maskedCardnumber = ( cardnumberr.substring(0, 4) + "XXXXXXXX" + cardnumberr.substring(12));
+                        String messageBody = "NGÂN HÀNG HUETCH BANK\n ---XIN THÔNG BÁO--- \nQuý khách có số tài khoản: " + maskedCardnumber + " đã bị khoá do nhập sai mã pin quá 5 lần \n" + "Xin quý khách vui lòng liên hệ số hotline: 0976554323.";
+                        SMS.sendSMS(messageBody);
                         JOptionPane.showMessageDialog(null, "Tài khoản của bạn đã bị khóa vĩnh viễn.\nVui lòng liên hệ với số hotline để được hỗ trợ!");
                         return;
                     } else if (wrongAttempts >= 3) {

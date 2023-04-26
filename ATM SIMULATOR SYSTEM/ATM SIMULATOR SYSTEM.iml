@@ -53,5 +53,14 @@
         <jarDirectory url="jar://$MODULE_DIR$/../twilio-java-main/target/twilio-9.5.0-javadoc.jar!/" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../slf4j-api-2.0.7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

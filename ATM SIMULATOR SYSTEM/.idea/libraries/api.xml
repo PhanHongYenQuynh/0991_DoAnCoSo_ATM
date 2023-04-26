@@ -1,6 +1,8 @@
 <component name="libraryTable">
   <library name="api">
-    <CLASSES />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../slf4j-api-2.0.7.jar!/" />
+    </CLASSES>
     <JAVADOC>
       <root url="file://$PROJECT_DIR$/../jcalendar-1/doc/api" />
     </JAVADOC>
