@@ -1,14 +1,11 @@
 package atm.simulator.system;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import com.twilio.SMS;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.security.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -86,92 +83,11 @@ public class Login extends JFrame implements ActionListener {
         signup.addActionListener(this);
         add(signup);
 
-        /*getContentPane().setBackground(Color.WHITE);*/
 
         setSize(800, 450);
         setVisible(true);
         setLocation(350, 200);
     }
-
-        // Code chưa mã hoá - không xoá
-
-  /*  public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() == clear) {
-            cardTextField.setText("");
-            pinTextField.setText("");
-        } else if (ae.getSource() == login) {
-            Conn conn = new Conn();
-            String cardnumber = cardTextField.getText();
-            String pinnumber = pinTextField.getText();
-            String query = "SELECT * FROM login WHERE cardnumber = '" + cardnumber + "' AND pin = '" + pinnumber + "'";
-            if (cardnumber.equals("") || pinnumber.equals("")) {
-                JOptionPane.showMessageDialog(null, "Vui lòng điền thông tin đầy đủ!");
-                return;
-            }
-
-            try {
-                ResultSet rs = conn.s.executeQuery(query);
-                if (rs.next()) {
-                    Timestamp lockedUntil = rs.getTimestamp("locked_until");
-                    if (lockedUntil != null && lockedUntil.after(new Timestamp(System.currentTimeMillis()))) {
-                        JOptionPane.showMessageDialog(null, "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ với số hotline để được hỗ trợ!");
-                        return;
-                    }
-                    setVisible(false);
-                    new Transactions(pinnumber).setVisible(true);
-                } else {
-                    // Lấy thông tin tài khoản từ database
-                    query = "SELECT * FROM login WHERE cardnumber = '" + cardnumber + "'";
-                    rs = conn.s.executeQuery(query);
-                    rs.next();
-                    int wrongAttempts = rs.getInt("wrong_attempts");
-                    Timestamp lockedUntil = rs.getTimestamp("locked_until");
-
-                    if (lockedUntil != null && lockedUntil.after(new Timestamp(System.currentTimeMillis()))) {
-                        String cardnumberr = rs.getString("cardnumber");
-                        String maskedCardnumber = (cardnumberr.substring(0, 4) + "XXXXXXXX" + cardnumberr.substring(12));
-                        String messageBody = ("NGAN HANG HUETCH BANK\n ---XIN THONG BAO--- \nQuy khac co so tai khoan: " + maskedCardnumber + " đa bi khoa do nhap sai ma pin quá nhieu lan \n" + "Xin quy khac vui long thu lai sau 10 phut.");
-                        SMS.sendSMS(messageBody);
-                        JOptionPane.showMessageDialog(null, messageBody);
-                        return;
-                    } else if (wrongAttempts >= 5) {
-                        // Khoá tài khoản vĩnh viễn nếu nhập sai quá nhiều lần
-                        query = "UPDATE login SET locked_until = CURRENT_TIMESTAMP + INTERVAL 10 YEAR WHERE cardnumber = '" + cardnumber + "'";
-                        conn.s.executeUpdate(query);
-
-                        //Lấy số thẻ
-                        query = "SELECT * FROM login WHERE cardnumber = '" + cardnumber + "'";
-                        rs = conn.s.executeQuery(query);
-                        rs.next();
-                        String cardnumberr = rs.getString("cardnumber");
-                        String maskedCardnumber = (cardnumberr.substring(0, 4) + "XXXXXXXX" + cardnumberr.substring(12));
-                        String messageBody = "NGAN HANG HUETCH BANK\n ---XIN THONG BAO--- \nQuy khach co so tai khoan: " + maskedCardnumber + " đa bi khoa do nhap sai ma pin qua 5 lan \n" + "Xin qua khach vui lang lien he se hotline: 0976554323.";
-                        SMS.sendSMS(messageBody);
-                        JOptionPane.showMessageDialog(null, "Tài khoản của bạn đã bị khóa.\nVui lòng liên hệ với số hotline để được hỗ trợ!");
-                        return;
-                    } else if (wrongAttempts >= 3) {
-                        // Khoá tài khoản trong 10 phút nếu nhập sai 3 lần
-                        lockedUntil = new Timestamp(System.currentTimeMillis() + 10 * 60 * 1000);
-                        query = "UPDATE login SET wrong_attempts = " + (wrongAttempts + 1) + ", locked_until = '" + lockedUntil + "' WHERE cardnumber = '" + cardnumber + "'";
-                        conn.s.executeUpdate(query);
-                        JOptionPane.showMessageDialog(null, "Quý khách đã nhập sai mã PIN!\nVui lòng kiểm tra và nhập lại đúng mã PIN.\nSố lần nhập sai: " + (wrongAttempts + 1));
-                    } else {
-                        // Cập nhật số lần nhập sai
-                        query = "UPDATE login SET wrong_attempts = " + (wrongAttempts + 1) + " WHERE cardnumber = '" + cardnumber + "'";
-                        conn.s.executeUpdate(query);
-                        JOptionPane.showMessageDialog(null, "Quý khách đã nhập sai mã PIN!\nVui lòng kiểm tra và nhập lại đúng mã PIN.\nSố lần nhập sai: " + (wrongAttempts + 1));
-                    }
-                }
-            } catch (SQLException e) {
-                System.out.println("Tài khoản quý khách không tồn tại!.");
-                System.out.println(e);
-                 e.printStackTrace();
-            }
-        } else if (ae.getSource() == signup) {
-            setVisible(false);
-            new SignupOne().setVisible(true);
-        }
-    }*/
 
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == clear) {
@@ -200,7 +116,7 @@ public class Login extends JFrame implements ActionListener {
                     String maskedCardNumber = (cardNumber.substring(0, 4) + "XXXXXXXX" + cardNumber.substring(12));
                     String encryptedPin = rs.getString("pin");
 
-                    if(RSAKeyManager.verify(pinNumber, encryptedPin)) {
+                    if (RSAKeyManager.verify(pinNumber, encryptedPin)) {
                         if (lockedUntil != null && lockedUntil.after(new Timestamp(System.currentTimeMillis()))) {
                             JOptionPane.showMessageDialog(null, "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ với số hotline để được hỗ trợ!");
                             return;
@@ -210,11 +126,10 @@ public class Login extends JFrame implements ActionListener {
                         new Transactions(cardNumber).setVisible(true);
                     } else {
                         if (lockedUntil != null && lockedUntil.after(new Timestamp(System.currentTimeMillis()))) {
-                            String messageBody = ("NGAN HANG HUETCH BANK\n ---XIN THONG BAO--- \nQuy khac co so tai khoan: " + maskedCardNumber + " đa bi khoa do nhap sai ma pin quá nhieu lan \n" + "Xin quy khac vui long thu lai sau 10 phut.");
+                            String messageBody = ("NGAN HANG HUETCH BANK\n ---XIN THONG BAO--- \nQuy khac co so tai khoan: " + maskedCardNumber + " đa bi khoa do nhap sai ma pin qua nhieu lan \n" + "Xin quy khac vui long thu lai sau 10 phut.");
                             SMS.sendSMS(messageBody);
                             JOptionPane.showMessageDialog(null, messageBody);
-                        }
-                        else if (wrongAttempts >= 3) {
+                        } else if (wrongAttempts >= 3) {
                             // Khoá tài khoản trong 10 phút nếu nhập sai 3 lần
                             ps = conn.c.prepareStatement("UPDATE login SET wrong_attempts = ?, locked_until = ? WHERE cardnumber = ?");
                             ps.setInt(1, (wrongAttempts + 1));
@@ -222,18 +137,16 @@ public class Login extends JFrame implements ActionListener {
                             ps.setString(3, cardNumber);
                             ps.executeUpdate();
                             JOptionPane.showMessageDialog(null, "Quý khách đã nhập sai mã PIN!\nVui lòng kiểm tra và nhập lại đúng mã PIN.\nSố lần nhập sai: " + (wrongAttempts + 1));
-                        }
-                        else if (wrongAttempts >= 5) {
+                        } else if (wrongAttempts >= 5) {
                             // Khoá tài khoản vĩnh viễn nếu nhập sai quá nhiều lần
                             ps = conn.c.prepareStatement("UPDATE login SET locked_until = CURRENT_TIMESTAMP + INTERVAL 10 YEAR WHERE cardnumber = ?");
                             ps.setString(1, cardNumber);
                             ps.executeUpdate();
 
-                            String messageBody = "NGAN HANG HUETCH BANK\n ---XIN THONG BAO--- \nQuy khách có số tài khoản: " + maskedCardNumber + " đã bị khóa do nhập sai mã PIN quá 5 lần \n" + "Vui lòng liên hệ với số hotline để được hỗ trợ: 0976554323.";
+                            String messageBody = "NGAN HANG HUETCH BANK\n ---XIN THONG BAO--- \nQuy khach co so tai khoan: " + maskedCardNumber + " đa bi khaa do nhap sai ma PIN qua 5 lan \n" + "Vui lang lien he voi so hotline đe đuoc ho tro: 0976554323.";
                             SMS.sendSMS(messageBody);
                             JOptionPane.showMessageDialog(null, "Tài khoản của bạn đã bị khóa.\nVui lòng liên hệ với số hotline để được hỗ trợ!");
-                        }
-                        else{
+                        } else {
                             ps = conn.c.prepareStatement("UPDATE login SET wrong_attempts = ? WHERE cardnumber = ?");
                             ps.setInt(1, (wrongAttempts + 1));
                             ps.setString(2, cardNumber);
@@ -241,8 +154,7 @@ public class Login extends JFrame implements ActionListener {
                             JOptionPane.showMessageDialog(null, "Quý khách đã nhập sai mã PIN!\nVui lòng kiểm tra và nhập lại đúng mã PIN.\nSố lần nhập sai: " + (wrongAttempts + 1));
                         }
                     }
-                }
-                else{
+                } else {
                     JOptionPane.showMessageDialog(null, "Tài khoản quý khách không tồn tại!.");
                 }
             } catch (SQLException e) {

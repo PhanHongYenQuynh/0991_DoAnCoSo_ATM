@@ -44,8 +44,8 @@ create table signupthree(
 	accountType varchar(40), 
 	cardnumber varbinary(1024), 
 	pin varbinary(1024), 
-	facility varchar(100
-));
+	facility varchar(100)
+);
 
 create table login(
 	formno varchar(20), 
