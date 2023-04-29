@@ -1,8 +1,15 @@
 package atm.simulator.system;
 
+import com.encryption.RSAEncryption;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.sql.PreparedStatement;
+import java.util.Base64;
 
 
 public class PinChange extends JFrame implements ActionListener {
@@ -67,6 +74,7 @@ public class PinChange extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == change) {
             try {
@@ -93,19 +101,41 @@ public class PinChange extends JFrame implements ActionListener {
                 }
 
                 Conn conn = new Conn();
+
+                // Generate key pair
+                KeyPair keyPair = RSAEncryption.generateKeyPair();
+                PublicKey publicKey = keyPair.getPublic();
+
+                // Mã hoá pinnumber trước khi chèn vào câu lệnh SQL
+                byte[] pinHash = RSAEncryption.hash(npin);
+                byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
+                String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
+
+                // Chèn dữ liệu vào câu lệnh SQL sử dụng prepared statement
                 String query1 = "update atm set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
                 String query2 = "update login set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
-                String query3 = "update signupthree set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
-                String query4 = "update bank_account set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
+                String query3 = "update signupthree set pin = ? where pin = '" + pinnumber + "' ";
+                String query4 = "update bank_account set pin = ? where pin = '" + pinnumber + "' ";
 
-                conn.s.executeUpdate(query1);
-                conn.s.executeUpdate(query2);
-                conn.s.executeUpdate(query3);
-                conn.s.executeUpdate(query4);
+                try {
+                    PreparedStatement ps1 = conn.c.prepareStatement(query1);
+                    ps1.executeUpdate();
+                    PreparedStatement ps2 = conn.c.prepareStatement(query2);
+                    ps2.executeUpdate();
+                    PreparedStatement ps3 = conn.c.prepareStatement(query3);
+                    ps3.setString(1, encodedPin);
+                    ps3.executeUpdate();
+                    PreparedStatement ps4 = conn.c.prepareStatement(query4);
+                    ps4.setString(1, pinnumber);
+                    ps4.executeUpdate();
 
-                JOptionPane.showMessageDialog(null, "Thay đổi mã pin thành công!");
-                setVisible(false);
-                new Transactions(rpin).setVisible(true);
+                    JOptionPane.showMessageDialog(null, "Thay đổi mã pin thành công!");
+                    setVisible(false);
+                    new Transactions(rpin).setVisible(true);
+
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
 
             } catch (Exception e) {
                 System.out.println(e);

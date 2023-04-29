@@ -1,9 +1,16 @@
 package atm.simulator.system;
 
+import com.encryption.RSAEncryption;
+
 import javax.swing.*;
 import java.awt.*;
-import java.sql.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Base64;
 
 public class MiniStatement extends JFrame implements ActionListener {
 
@@ -31,7 +38,62 @@ public class MiniStatement extends JFrame implements ActionListener {
         balancee.setBounds(20, 750, 300, 20);
         add(balancee);
 
+
+         try {
+            Conn c = new Conn();
+            ResultSet rs = c.s.executeQuery("select * from login where pin = '" + pinnumber + "'");
+            while (rs.next()) {
+                card.setText("Card number:    " + rs.getString("cardnumber").substring(0, 4) + "XXXXXXXX" + rs.getString("cardnumber").substring(12));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+
+        int balance = 0;
+        Conn conn = new Conn();
+
         try {
+            // Generate key pair
+            KeyPair keyPair = RSAEncryption.generateKeyPair();
+            PublicKey publicKey = keyPair.getPublic();
+
+            // Mã hoá pinnumber trước khi chèn vào câu lệnh SQL
+            byte[] pinHash = RSAEncryption.hash(pinnumber);
+            byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
+            String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
+
+            String query = "SELECT * FROM bank_account where pin = ?";
+            PreparedStatement ps = conn.c.prepareStatement(query);
+            ps.setString(1, encodedPin);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                // Hiển thị số dư tài khoản
+                balance = rs.getInt("balance");
+                balancee.setText("Số dư tài khoản là: " + balance + "VNĐ");
+
+                // Hiển thị lịch sử giao dịch
+                query = "SELECT * FROM atm where pin = ?";
+                ps = conn.c.prepareStatement(query);
+                ps.setString(1, encodedPin);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    mini.setText(mini.getText() + "<html>" + rs.getString("date") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                            + rs.getString("type") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                            + rs.getString("amount") + "<br><br><html>");
+                }
+            } else {
+                // Không tìm thấy tài khoản
+                balancee.setText("Không tìm thấy tài khoản");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Code chưa mã hoá - không xoá
+      /*  try {
             Conn c = new Conn();
             ResultSet rs = c.s.executeQuery("select * from login where pin = '" + pinnumber + "'");
             while (rs.next()) {
@@ -66,7 +128,7 @@ public class MiniStatement extends JFrame implements ActionListener {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
         String amountText = numberToWords(balance);
         JLabel label = new JLabel("Số dư bằng chữ: \n" + amountText);

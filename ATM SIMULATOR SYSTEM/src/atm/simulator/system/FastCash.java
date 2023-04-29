@@ -1,11 +1,17 @@
 package atm.simulator.system;
 /*import com.github.tiennv147.vnconvert.NumberToWords;*/
 
+import com.encryption.RSAEncryption;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.nio.file.FileAlreadyExistsException;
-import java.sql.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Base64;
 import java.util.Date;
 
 public class FastCash extends JFrame implements ActionListener {
@@ -112,8 +118,9 @@ public class FastCash extends JFrame implements ActionListener {
         return "số quá lớn";
     }
 
+    // Code chưa mã hoá - không xoá
 
-    public void actionPerformed(ActionEvent ae) {
+    /*public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == back) {
             setVisible(false);
             new Transactions(pinnumber).setVisible(true);
@@ -152,7 +159,66 @@ public class FastCash extends JFrame implements ActionListener {
                 System.out.println(e);
             }
         }
+    }*/
+
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == back) {
+            setVisible(false);
+            new Transactions(pinnumber).setVisible(true);
+        } else if (ae.getSource() == other) {
+            setVisible(false);
+            new Withdrawal(pinnumber).setVisible(true);
+        } else {
+            String amount = ((JButton) ae.getSource()).getText().substring(0, ((JButton) ae.getSource()).getText().length() - 4);
+            Conn conn = new Conn();
+            try {
+                // Kiểm tra số dư
+                PreparedStatement ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE pin = ?");
+                KeyPair keyPair = RSAEncryption.generateKeyPair();
+                PublicKey publicKey = keyPair.getPublic();
+                byte[] pinHash = RSAEncryption.hash(pinnumber);
+                byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
+                String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
+                ps.setString(1, encodedPin);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    int currentBalance = rs.getInt("balance");
+                    if (currentBalance < Integer.parseInt(amount)) {
+                        JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
+                        return;
+                    }
+                }
+                Date date = new Date();
+                int amountInt = Integer.parseInt(amount);
+                String amountText = numberToWords(amountInt);
+                JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
+                ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE pin = ?");
+                ps.setString(1, encodedPin);
+                rs = ps.executeQuery();
+                if (rs.next()) {
+                    int currentBalance = rs.getInt("balance");
+                    int newBalance = currentBalance - amountInt;
+                    ps = conn.c.prepareStatement("UPDATE bank_account SET balance = ? WHERE pin = ?");
+                    ps.setInt(1, newBalance);
+                    ps.setString(2, encodedPin);
+                    ps.executeUpdate();
+                }
+                String query = "INSERT INTO atm VALUES(?, ?, ?, ?)";
+                ps = conn.c.prepareStatement(query);
+                ps.setString(1, encodedPin);
+                ps.setString(2, date.toString());
+                ps.setString(3, "Rút tiền");
+                ps.setString(4, amount);
+                ps.executeUpdate();
+                setVisible(false);
+                new Transactions(pinnumber).setVisible(true);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
     }
+
+
 
 
     public static void main(String args[]) {

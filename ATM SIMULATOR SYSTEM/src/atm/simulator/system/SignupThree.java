@@ -1,12 +1,18 @@
 package atm.simulator.system;
 
+import com.encryption.RSAEncryption;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.sql.PreparedStatement;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Base64;
+import java.util.Random;
+
 
 public class SignupThree extends JFrame implements ActionListener {
 
@@ -163,7 +169,7 @@ public class SignupThree extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent ae) {
+   /* public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == submit) {
             String accountType = null;
             if (r1.isSelected()) {
@@ -180,8 +186,6 @@ public class SignupThree extends JFrame implements ActionListener {
             String cardnumber = "" + Math.abs((ran.nextLong() % 90000000L) + 970422000000000L);
             String pinnumber = "" + Math.abs((ran.nextLong() % 900000L) + 100000L);
 
-            /*String visanumber = "" + Math.abs((ran.nextLong() % 90000000L) + 408904000000000L);
-            String pvisanumber = "" + Math.abs((ran.nextLong() % 900000L) + 1000L);*/
 
             String facility = "";
             if (c1.isSelected()) {
@@ -241,9 +245,120 @@ public class SignupThree extends JFrame implements ActionListener {
             setVisible(false);
             new Login().setVisible(true);
         }
+    }*/
+
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == submit) {
+            String accountType = null;
+            if (r1.isSelected()) {
+                accountType = "Tài khoản tiết kiệm";
+            } else if (r2.isSelected()) {
+                accountType = "Tài khoản thanh toán";
+            } else if (r3.isSelected()) {
+                accountType = "Tài khoản tín dụng";
+            } else if (r4.isSelected()) {
+                accountType = "Tài khoản cho vay";
+            }
+
+            Random ran = new Random();
+            String cardnumber = "" + Math.abs((ran.nextLong() % 90000000L) + 970422000000000L);
+            String pinnumber = "" + Math.abs((ran.nextLong() % 900000L) + 100000L);
+
+            String facility = "";
+            if (c1.isSelected()) {
+                facility = facility + "ATM Card,";
+            }
+            if (c2.isSelected()) {
+                facility = facility + "Internet Banking,";
+            }
+            if (c3.isSelected()) {
+                facility = facility + "Mobile Banking,";
+            }
+            if (c4.isSelected()) {
+                facility = facility + "EMAIL & SMS Alerts,";
+            }
+            if (c5.isSelected()) {
+                facility = facility + "Cheque Book,";
+            }
+            if (c6.isSelected()) {
+                facility = facility + "E-Statement,";
+            }
+
+            // Loại bỏ dấu phẩy cuối cùng
+            if (facility.endsWith(",")) {
+                facility = facility.substring(0, facility.length() - 1);
+            }
+
+            int balance = 0;
+            int wrong_attempts = 0;
+            Timestamp lockedUntil = null;
+
+            try {
+                if (accountType.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn loại tài khoản");
+                } else {
+
+                    Conn conn = new Conn();
+
+                    // Generate key pair
+                    KeyPair keyPair = RSAEncryption.generateKeyPair();
+                    PublicKey publicKey = keyPair.getPublic();
+
+                    // Mã hoá cardnumber và pinnumber trước khi chèn vào câu lệnh SQL
+                    byte[] carnumberHash = RSAEncryption.hash(cardnumber);
+                    byte[] pinHash = RSAEncryption.hash(pinnumber);
+                    byte[] encryptedCarnumber = RSAEncryption.encrypt(carnumberHash, publicKey);
+                    byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
+                    String encodedCarnumber = Base64.getEncoder().encodeToString(encryptedCarnumber);
+                    String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
+
+                    // Chèn dữ liệu vào câu lệnh SQL sử dụng prepared statement
+                    String query1 = "insert into signupthree values(?, ?, ?, ?, ?)";
+                    String query2 = "insert into login values(?, ?, ?, ?, ?)";
+                    String query3 = "insert into bank_account values(?, ?, ?)";
+                    PreparedStatement ps1 = conn.c.prepareStatement(query1);
+                    ps1.setString(1, formno);
+                    ps1.setString(2, accountType);
+                    ps1.setString(3, encodedCarnumber);
+                    ps1.setString(4, encodedPin);
+                    ps1.setString(5, facility);
+                    ps1.executeUpdate();
+
+                    PreparedStatement ps2 = conn.c.prepareStatement(query2);
+                    ps2.setString(1, formno);
+                    ps2.setString(2, cardnumber);
+                    ps2.setString(3, pinnumber);
+                    ps2.setInt(4, wrong_attempts);
+                    ps2.setTimestamp(5, lockedUntil);
+                    ps2.executeUpdate();
+
+                    PreparedStatement ps3 = conn.c.prepareStatement(query3);
+                    ps3.setString(1, cardnumber);
+                    ps3.setString(2, pinnumber);
+                    ps3.setInt(3, balance);
+                    ps3.executeUpdate();
+
+                    JOptionPane.showMessageDialog(null, "STK:" + cardnumber + "\n Pin:" + pinnumber);
+                    System.out.println("Card: " + cardnumber);
+                    System.out.println("Carddencrypt: " + encodedCarnumber);
+                    System.out.println("Pindencrypt: " + pinnumber);
+                    System.out.println("Pindencrypt: " + encodedPin);
+                    setVisible(false);
+                    new Deposit(pinnumber).setVisible(false);
+                }
+
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+        } else if (ae.getSource() == cancel) {
+            setVisible(false);
+            new Login().setVisible(true);
+        }
     }
 
     public static void main(String args[]) {
         new SignupThree("").setVisible(true);
+
     }
 }

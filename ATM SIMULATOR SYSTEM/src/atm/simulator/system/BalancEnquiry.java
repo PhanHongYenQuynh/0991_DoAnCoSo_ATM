@@ -1,11 +1,16 @@
 package atm.simulator.system;
 
-import java.text.NumberFormat;
-import java.util.Locale;
+import com.encryption.RSAEncryption;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.sql.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Base64;
 
 public class BalancEnquiry extends JFrame implements ActionListener {
     JButton back;
@@ -26,10 +31,37 @@ public class BalancEnquiry extends JFrame implements ActionListener {
         back.addActionListener(this);
         image.add(back);
 
-        Conn conn = new Conn();
+
+        // Code chưa mã hoá - không xoá
+        /*Conn conn = new Conn();
         int balance = 0;
         try {
             ResultSet rs = conn.s.executeQuery("select balance from bank_account where pin= '" + pinnumber + "'");
+            if (rs.next()) {
+                balance = rs.getInt("balance");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }*/
+
+
+        Conn conn = new Conn();
+        int balance = 0;
+        try {
+
+            // Generate key pair
+            KeyPair keyPair = RSAEncryption.generateKeyPair();
+            PublicKey publicKey = keyPair.getPublic();
+
+            // Mã hoá pinnumber trước khi truy vấn từ cơ sở dữ liệu
+            byte[] pinHash = RSAEncryption.hash(pinnumber);
+            byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
+            String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
+            String query = "select balance from bank_account where pin = ?";
+            PreparedStatement ps = conn.c.prepareStatement(query);
+            ps.setString(1, encodedPin);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 balance = rs.getInt("balance");
             }

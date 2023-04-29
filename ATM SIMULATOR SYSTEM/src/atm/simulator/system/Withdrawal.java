@@ -1,10 +1,16 @@
 package atm.simulator.system;
 
+import com.encryption.RSAEncryption;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.sql.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Base64;
 import java.util.Date;
 
 public class Withdrawal extends JFrame implements ActionListener {
@@ -85,8 +91,8 @@ public class Withdrawal extends JFrame implements ActionListener {
 
         return "số quá lớn";
     }
-
-    public void actionPerformed(ActionEvent ae) {
+    // Code chưa mã hoá - không xoá
+   /* public void actionPerformed(ActionEvent ae) {
         try {
             String number = amount.getText();
             Date date = new Date();
@@ -120,6 +126,74 @@ public class Withdrawal extends JFrame implements ActionListener {
                     }
 
                     conn.s.executeUpdate("insert into atm values('" + pinnumber + "', '" + date + "', 'Rút tiền', '" + number + "')");
+
+                    setVisible(false);
+                    new Transactions(pinnumber).setVisible(true);
+                }
+            } else if (ae.getSource() == back) {
+                setVisible(false);
+                new Transactions(pinnumber).setVisible(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("error: " + e);
+        }
+    }*/
+
+
+    public void actionPerformed(ActionEvent ae) {
+        try {
+            String number = amount.getText();
+            Date date = new Date();
+
+            if (ae.getSource() == withdrawl) {
+                if (number.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn rút!.");
+                } else if (Integer.parseInt(number) <= 0) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền hợp lệ!.");
+                } else {
+                    Conn conn = new Conn();
+
+                    // Kiểm tra số dư
+                    PreparedStatement ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE pin = ?");
+                    KeyPair keyPair = RSAEncryption.generateKeyPair();
+                    PublicKey publicKey = keyPair.getPublic();
+                    byte[] pinHash = RSAEncryption.hash(pinnumber);
+                    byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
+                    String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
+                    ps.setString(1, encodedPin);
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next()) {
+                        int currentBalance = rs.getInt("balance");
+                        if (currentBalance < Integer.parseInt(number)) {
+                            JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
+                            return;
+                        }
+                    }
+
+                    int amountInt = Integer.parseInt(number);
+                    String amountText = numberToWords(amountInt);
+                    JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
+
+                    // update account balance in bank_account table
+                    ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE pin = ?");
+                    ps.setString(1, encodedPin);
+                    rs = ps.executeQuery();
+                    if (rs.next()) {
+                        int currentBalance = rs.getInt("balance");
+                        int newBalance = currentBalance - amountInt;
+                        ps = conn.c.prepareStatement("UPDATE bank_account SET balance = ? WHERE pin = ?");
+                        ps.setInt(1, newBalance);
+                        ps.setString(2, encodedPin);
+                        ps.executeUpdate();
+                    }
+
+                    ps = conn.c.prepareStatement("INSERT INTO atm VALUES (?, ?, ?, ?)");
+                    ps.setString(1, encodedPin);
+                    ps.setString(2, date.toString());
+                    ps.setString(3, "Rút tiền");
+                    ps.setString(4, number);
+                    ps.executeUpdate();
 
                     setVisible(false);
                     new Transactions(pinnumber).setVisible(true);
