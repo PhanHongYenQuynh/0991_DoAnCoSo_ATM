@@ -1,26 +1,21 @@
 package atm.simulator.system;
 
-import com.encryption.RSAEncryption;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.KeyPair;
-import java.security.PublicKey;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Base64;
 import java.util.Date;
 
 public class Withdrawal extends JFrame implements ActionListener {
 
     JTextField amount;
     JButton withdrawl, back;
-    String pinnumber;
+    String cardnumber;
 
-    Withdrawal(String pinnumber) {
-        this.pinnumber = pinnumber;
+    Withdrawal(String cardnumber) {
+        this.cardnumber = cardnumber;
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/atm.jpg"));
         Image i2 = i1.getImage().getScaledInstance(900, 1054, Image.SCALE_DEFAULT);
@@ -91,54 +86,6 @@ public class Withdrawal extends JFrame implements ActionListener {
 
         return "số quá lớn";
     }
-    // Code chưa mã hoá - không xoá
-   /* public void actionPerformed(ActionEvent ae) {
-        try {
-            String number = amount.getText();
-            Date date = new Date();
-
-            if (ae.getSource() == withdrawl) {
-                if (number.equals("")) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn rút!.");
-                } else if (Integer.parseInt(number) <= 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền hợp lệ!.");
-                } else {
-                    Conn conn = new Conn();
-                    ResultSet rs = conn.s.executeQuery("SELECT balance FROM bank_account WHERE pin = '" + pinnumber + "'");
-                    if (rs.next()) {
-                        int currentBalance = rs.getInt("balance");
-                        if (currentBalance < Integer.parseInt(number)) {
-                            JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
-                            return;
-                        }
-                    }
-
-                    int amountInt = Integer.parseInt(number);
-                    String amountText = numberToWords(amountInt);
-                    JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
-
-                    // update account balance in bank_account table
-                    rs = conn.s.executeQuery("select balance from bank_account where pin = '" + pinnumber + "'");
-                    if (rs.next()) {
-                        int currentBalance = rs.getInt("balance");
-                        int newBalance = currentBalance - amountInt;
-                        conn.s.executeUpdate("update bank_account set balance = " + newBalance + " where pin = '" + pinnumber + "'");
-                    }
-
-                    conn.s.executeUpdate("insert into atm values('" + pinnumber + "', '" + date + "', 'Rút tiền', '" + number + "')");
-
-                    setVisible(false);
-                    new Transactions(pinnumber).setVisible(true);
-                }
-            } else if (ae.getSource() == back) {
-                setVisible(false);
-                new Transactions(pinnumber).setVisible(true);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("error: " + e);
-        }
-    }*/
 
 
     public void actionPerformed(ActionEvent ae) {
@@ -155,13 +102,8 @@ public class Withdrawal extends JFrame implements ActionListener {
                     Conn conn = new Conn();
 
                     // Kiểm tra số dư
-                    PreparedStatement ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE pin = ?");
-                    KeyPair keyPair = RSAEncryption.generateKeyPair();
-                    PublicKey publicKey = keyPair.getPublic();
-                    byte[] pinHash = RSAEncryption.hash(pinnumber);
-                    byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
-                    String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
-                    ps.setString(1, encodedPin);
+                    PreparedStatement ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE acc_no = ?");
+                    ps.setString(1, cardnumber);
                     ResultSet rs = ps.executeQuery();
                     if (rs.next()) {
                         int currentBalance = rs.getInt("balance");
@@ -176,31 +118,31 @@ public class Withdrawal extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
 
                     // update account balance in bank_account table
-                    ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE pin = ?");
-                    ps.setString(1, encodedPin);
+                    ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE acc_no = ?");
+                    ps.setString(1, cardnumber);
                     rs = ps.executeQuery();
                     if (rs.next()) {
                         int currentBalance = rs.getInt("balance");
                         int newBalance = currentBalance - amountInt;
-                        ps = conn.c.prepareStatement("UPDATE bank_account SET balance = ? WHERE pin = ?");
+                        ps = conn.c.prepareStatement("UPDATE bank_account SET balance = ? WHERE acc_no = ?");
                         ps.setInt(1, newBalance);
-                        ps.setString(2, encodedPin);
+                        ps.setString(2, cardnumber);
                         ps.executeUpdate();
                     }
 
                     ps = conn.c.prepareStatement("INSERT INTO atm VALUES (?, ?, ?, ?)");
-                    ps.setString(1, encodedPin);
+                    ps.setString(1, cardnumber);
                     ps.setString(2, date.toString());
                     ps.setString(3, "Rút tiền");
                     ps.setString(4, number);
                     ps.executeUpdate();
 
                     setVisible(false);
-                    new Transactions(pinnumber).setVisible(true);
+                    new Transactions(cardnumber).setVisible(true);
                 }
             } else if (ae.getSource() == back) {
                 setVisible(false);
-                new Transactions(pinnumber).setVisible(true);
+                new Transactions(cardnumber).setVisible(true);
             }
         } catch (Exception e) {
             e.printStackTrace();

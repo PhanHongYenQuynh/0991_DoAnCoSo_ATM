@@ -14,10 +14,10 @@ import java.util.Base64;
 
 public class MiniStatement extends JFrame implements ActionListener {
 
-    String pinnumber;
+    String cardnumber;
 
-    MiniStatement(String pinnumber) {
-        this.pinnumber = pinnumber;
+    MiniStatement(String cardnumber) {
+        this.cardnumber = cardnumber;
         setTitle("In Sao Kê");
 
         setLayout(null);
@@ -41,7 +41,7 @@ public class MiniStatement extends JFrame implements ActionListener {
 
          try {
             Conn c = new Conn();
-            ResultSet rs = c.s.executeQuery("select * from login where pin = '" + pinnumber + "'");
+            ResultSet rs = c.s.executeQuery("select * from login where cardnumber = '" + cardnumber + "'");
             while (rs.next()) {
                 card.setText("Card number:    " + rs.getString("cardnumber").substring(0, 4) + "XXXXXXXX" + rs.getString("cardnumber").substring(12));
             }
@@ -54,18 +54,10 @@ public class MiniStatement extends JFrame implements ActionListener {
         Conn conn = new Conn();
 
         try {
-            // Generate key pair
-            KeyPair keyPair = RSAEncryption.generateKeyPair();
-            PublicKey publicKey = keyPair.getPublic();
 
-            // Mã hoá pinnumber trước khi chèn vào câu lệnh SQL
-            byte[] pinHash = RSAEncryption.hash(pinnumber);
-            byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
-            String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
-
-            String query = "SELECT * FROM bank_account where pin = ?";
+            String query = "SELECT * FROM bank_account where acc_no = ?";
             PreparedStatement ps = conn.c.prepareStatement(query);
-            ps.setString(1, encodedPin);
+            ps.setString(1, cardnumber);
 
             ResultSet rs = ps.executeQuery();
 
@@ -75,9 +67,9 @@ public class MiniStatement extends JFrame implements ActionListener {
                 balancee.setText("Số dư tài khoản là: " + balance + "VNĐ");
 
                 // Hiển thị lịch sử giao dịch
-                query = "SELECT * FROM atm where pin = ?";
+                query = "SELECT * FROM atm where cardnumber = ?";
                 ps = conn.c.prepareStatement(query);
-                ps.setString(1, encodedPin);
+                ps.setString(1, cardnumber);
                 rs = ps.executeQuery();
                 while (rs.next()) {
                     mini.setText(mini.getText() + "<html>" + rs.getString("date") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
@@ -92,43 +84,6 @@ public class MiniStatement extends JFrame implements ActionListener {
             e.printStackTrace();
         }
 
-        // Code chưa mã hoá - không xoá
-      /*  try {
-            Conn c = new Conn();
-            ResultSet rs = c.s.executeQuery("select * from login where pin = '" + pinnumber + "'");
-            while (rs.next()) {
-                card.setText("Card number:    " + rs.getString("cardnumber").substring(0, 4) + "XXXXXXXX" + rs.getString("cardnumber").substring(12));
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        int balance = 0;
-        Conn conn = new Conn();
-
-        try {
-            ResultSet rs = conn.s.executeQuery("SELECT * FROM bank_account where pin = '" + pinnumber + "'");
-
-            if (rs.next()) {
-                // Hiển thị số dư tài khoản
-                balance = rs.getInt("balance");
-                balancee.setText("Số dư tài khoản là: " + balance + "VNĐ");
-
-                // Hiển thị lịch sử giao dịch
-                rs = conn.s.executeQuery("SELECT * FROM atm where pin = '" + pinnumber + "'");
-                while (rs.next()) {
-                    mini.setText(mini.getText() + "<html>" + rs.getString("date") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-                            + rs.getString("type") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-                            + rs.getString("amount") + "<br><br><html>");
-                }
-            } else {
-                // Không tìm thấy tài khoản
-                balancee.setText("Không tìm thấy tài khoản");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
 
         String amountText = numberToWords(balance);
         JLabel label = new JLabel("Số dư bằng chữ: \n" + amountText);

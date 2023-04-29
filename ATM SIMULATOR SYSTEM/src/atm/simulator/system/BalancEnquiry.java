@@ -6,18 +6,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.KeyPair;
-import java.security.PublicKey;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Base64;
+
 
 public class BalancEnquiry extends JFrame implements ActionListener {
     JButton back;
-    String pinnumber;
+    String cardnumber;
 
-    BalancEnquiry(String pinnumber) {
-        this.pinnumber = pinnumber;
+    BalancEnquiry(String cardnumber) {
+        this.cardnumber = cardnumber;
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/atm.jpg"));
         Image i2 = i1.getImage().getScaledInstance(900, 1054, Image.SCALE_DEFAULT);
@@ -31,36 +29,13 @@ public class BalancEnquiry extends JFrame implements ActionListener {
         back.addActionListener(this);
         image.add(back);
 
-
-        // Code chưa mã hoá - không xoá
-        /*Conn conn = new Conn();
-        int balance = 0;
-        try {
-            ResultSet rs = conn.s.executeQuery("select balance from bank_account where pin= '" + pinnumber + "'");
-            if (rs.next()) {
-                balance = rs.getInt("balance");
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }*/
-
-
         Conn conn = new Conn();
         int balance = 0;
         try {
 
-            // Generate key pair
-            KeyPair keyPair = RSAEncryption.generateKeyPair();
-            PublicKey publicKey = keyPair.getPublic();
-
-            // Mã hoá pinnumber trước khi truy vấn từ cơ sở dữ liệu
-            byte[] pinHash = RSAEncryption.hash(pinnumber);
-            byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
-            String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
-            String query = "select balance from bank_account where pin = ?";
+            String query = "select balance from bank_account where acc_no = ?";
             PreparedStatement ps = conn.c.prepareStatement(query);
-            ps.setString(1, encodedPin);
+            ps.setString(1, cardnumber);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 balance = rs.getInt("balance");
@@ -126,7 +101,7 @@ public class BalancEnquiry extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent ae) {
         setVisible(false);
-        new Transactions(pinnumber).setVisible(true);
+        new Transactions(cardnumber).setVisible(true);
     }
 
     public static void main(String args[]) {

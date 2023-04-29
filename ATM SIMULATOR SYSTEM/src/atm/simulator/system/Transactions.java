@@ -6,10 +6,10 @@ import java.awt.event.*;
 
 public class Transactions extends JFrame implements ActionListener {
     JButton deposit, transfer, ministatement, pinchange, fastcash, balanceinquiry, withdrawal, exit;
-    String pinnumber;
+    String cardNumber;
 
-    Transactions(String pinnumber) {
-        this.pinnumber = pinnumber;
+    Transactions(String cardNumber) {
+        this.cardNumber = cardNumber;
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/atm.jpg"));
         Image i2 = i1.getImage().getScaledInstance(900, 1054, Image.SCALE_DEFAULT);
@@ -72,25 +72,25 @@ public class Transactions extends JFrame implements ActionListener {
             System.exit(0);
         } else if (ae.getSource() == deposit) {
             setVisible(false);
-            new Deposit(pinnumber).setVisible(true);
+            new Deposit(cardNumber).setVisible(true);
         } else if (ae.getSource() == transfer) {
             setVisible(false);
-            new Transfer(pinnumber).setVisible(true);
+            new Transfer(cardNumber).setVisible(true);
         } else if (ae.getSource() == fastcash) {
             setVisible(false);
-            new FastCash(pinnumber).setVisible(true);
+            new FastCash(cardNumber).setVisible(true);
         } else if (ae.getSource() == balanceinquiry) {
             setVisible(false);
-            new BalancEnquiry(pinnumber).setVisible(true);
+            new BalancEnquiry(cardNumber).setVisible(true);
         } else if (ae.getSource() == pinchange) {
             setVisible(false);
-            new PinChange(pinnumber).setVisible(true);
+            new PinChange(cardNumber).setVisible(true);
         } else if (ae.getSource() == ministatement) {
             setVisible(false);
-            new MiniStatement(pinnumber).setVisible(true);
+            new MiniStatement(cardNumber).setVisible(true);
         } else if (ae.getSource() == ministatement) {
             setVisible(false);
-            new MiniStatement(pinnumber).setVisible(true);
+            new MiniStatement(cardNumber).setVisible(true);
         }
     }
 
