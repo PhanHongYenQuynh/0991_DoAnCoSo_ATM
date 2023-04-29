@@ -16,11 +16,11 @@ public class PinChange extends JFrame implements ActionListener {
 
     JPasswordField pin, repin;
     JButton change, back;
-    String pinnumber;
+    String cardNumber;
 
-    PinChange(String pinnumber) {
+    PinChange(String cardNumber) {
 
-        this.pinnumber = pinnumber;
+        this.cardNumber = cardNumber;
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/atm.jpg"));
         Image i2 = i1.getImage().getScaledInstance(900, 1054, Image.SCALE_DEFAULT);
@@ -81,52 +81,38 @@ public class PinChange extends JFrame implements ActionListener {
                 String npin = pin.getText();
                 String rpin = repin.getText();
 
-                if (!npin.equals(rpin)) {
-                    JOptionPane.showMessageDialog(null, "Quý khách nhập mã pin không trùng nhau. \n Xin vui lòng nhập lại!.");
-                    return;
-                }
                 if (npin.equals("")) {
                     JOptionPane.showMessageDialog(null, "Vui lòng không trống mã pin!");
                     return;
                 }
-
                 if (npin.length() != 6) {
                     JOptionPane.showMessageDialog(null, "Vui lòng nhập đúng 6 số.");
                     return;
                 }
-
                 if (rpin.equals("")) {
                     JOptionPane.showMessageDialog(null, "Vui lòng không bỏ trống nhập lại mã pin!");
+                    return;
+                }
+                if (!npin.equals(rpin)) {
+                    JOptionPane.showMessageDialog(null, "Quý khách nhập mã pin không trùng nhau. \n Xin vui lòng nhập lại!.");
                     return;
                 }
 
                 Conn conn = new Conn();
 
-                // Generate key pair
-                KeyPair keyPair = RSAEncryption.generateKeyPair();
-                PublicKey publicKey = keyPair.getPublic();
-
-                // Mã hoá pinnumber trước khi chèn vào câu lệnh SQL
-                byte[] pinHash = RSAEncryption.hash(npin);
-                byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
-                String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
+                String encodedPin = RSAKeyManager.hash(rpin);
 
                 // Chèn dữ liệu vào câu lệnh SQL sử dụng prepared statement
-                String query1 = "update atm set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
-                String query2 = "update login set pin = '" + rpin + "' where pin = '" + pinnumber + "' ";
-                String query3 = "update signupthree set pin = ? where pin = '" + pinnumber + "' ";
-                String query4 = "update bank_account set pin = ? where pin = '" + pinnumber + "' ";
+                String query2 = "update login set pin = '" + encodedPin + "' where cardnumber = '" + cardNumber + "' ";
+                String query3 = "update signupthree set pin = '" + encodedPin + "' where cardnumber = '" + cardNumber + "'";
+                String query4 = "update bank_account set pin = '" + encodedPin + "' where acc_no = '" + cardNumber + "'";
 
                 try {
-                    PreparedStatement ps1 = conn.c.prepareStatement(query1);
-                    ps1.executeUpdate();
                     PreparedStatement ps2 = conn.c.prepareStatement(query2);
                     ps2.executeUpdate();
                     PreparedStatement ps3 = conn.c.prepareStatement(query3);
-                    ps3.setString(1, encodedPin);
                     ps3.executeUpdate();
                     PreparedStatement ps4 = conn.c.prepareStatement(query4);
-                    ps4.setString(1, pinnumber);
                     ps4.executeUpdate();
 
                     JOptionPane.showMessageDialog(null, "Thay đổi mã pin thành công!");
@@ -142,7 +128,7 @@ public class PinChange extends JFrame implements ActionListener {
             }
         } else {
             setVisible(false);
-            new Transactions(pinnumber).setVisible(true);
+            new Login().setVisible(true);
         }
 
     }

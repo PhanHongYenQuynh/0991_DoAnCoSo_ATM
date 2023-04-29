@@ -6,8 +6,6 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.security.*;
-import java.util.Base64;
-import java.util.Random;
 
 public class RSAEncryption {
     private static final String ALGORITHM = "RSA";
@@ -35,38 +33,6 @@ public class RSAEncryption {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         return cipher.doFinal(ciphertext);
-    }
-
-    public static void main(String[] args) throws Exception {
-        // Generate key pair
-        KeyPair keyPair = generateKeyPair();
-
-        Random ran = new Random();
-
-        // Encrypt carnumber and pin
-        String cardnumber = "" + Math.abs((ran.nextLong() % 90000000L) + 970422000000000L);
-        String pinnumber = "" + Math.abs((ran.nextLong() % 900000L) + 100000L);
-        ;
-        byte[] carnumberHash = hash(cardnumber);
-        byte[] pinHash = hash(pinnumber);
-        byte[] encryptedCarnumber = encrypt(carnumberHash, keyPair.getPublic());
-        byte[] encryptedPin = encrypt(pinHash, keyPair.getPublic());
-
-        // Print encrypted carnumber and pin
-        System.out.println("Encrypted CarNumber: " + Base64.getEncoder().encodeToString(encryptedCarnumber));
-        System.out.println("Encrypted Pin: " + Base64.getEncoder().encodeToString(encryptedPin));
-
-        // Decrypt carnumber and pin
-        byte[] decryptedCarnumberHash = decrypt(encryptedCarnumber, keyPair.getPrivate());
-        byte[] decryptedPinHash = decrypt(encryptedPin, keyPair.getPrivate());
-        String decryptedCarnumber = new String(decryptedCarnumberHash);
-        String decryptedPin = new String(decryptedPinHash);
-
-        // Print decrypted carnumber and pin
-        System.out.println("CarNumber: " + cardnumber);
-        System.out.println("Decrypted CarNumber: " + decryptedCarnumber);
-        System.out.println("Pin: " + pinnumber);
-        System.out.println("Decrypted Pin: " + decryptedPin);
     }
 }
 

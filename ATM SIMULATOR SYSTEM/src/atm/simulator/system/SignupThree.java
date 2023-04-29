@@ -261,8 +261,8 @@ public class SignupThree extends JFrame implements ActionListener {
             }
 
             Random ran = new Random();
-            String cardnumber = "" + Math.abs((ran.nextLong() % 90000000L) + 970422000000000L);
-            String pinnumber = "" + Math.abs((ran.nextLong() % 900000L) + 100000L);
+            String cardNumber = "" + Math.abs((ran.nextLong() % 90000000L) + 970422000000000L);
+            String pinNumber = "" + Math.abs((ran.nextLong() % 900000L) + 100000L);
 
             String facility = "";
             if (c1.isSelected()) {
@@ -300,17 +300,7 @@ public class SignupThree extends JFrame implements ActionListener {
 
                     Conn conn = new Conn();
 
-                    // Generate key pair
-                    KeyPair keyPair = RSAEncryption.generateKeyPair();
-                    PublicKey publicKey = keyPair.getPublic();
-
-                    // Mã hoá cardnumber và pinnumber trước khi chèn vào câu lệnh SQL
-                    byte[] carnumberHash = RSAEncryption.hash(cardnumber);
-                    byte[] pinHash = RSAEncryption.hash(pinnumber);
-                    byte[] encryptedCarnumber = RSAEncryption.encrypt(carnumberHash, publicKey);
-                    byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
-                    String encodedCarnumber = Base64.getEncoder().encodeToString(encryptedCarnumber);
-                    String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
+                    String encodedPin = RSAKeyManager.hash(pinNumber);
 
                     // Chèn dữ liệu vào câu lệnh SQL sử dụng prepared statement
                     String query1 = "insert into signupthree values(?, ?, ?, ?, ?)";
@@ -319,32 +309,30 @@ public class SignupThree extends JFrame implements ActionListener {
                     PreparedStatement ps1 = conn.c.prepareStatement(query1);
                     ps1.setString(1, formno);
                     ps1.setString(2, accountType);
-                    ps1.setString(3, encodedCarnumber);
+                    ps1.setString(3, cardNumber);
                     ps1.setString(4, encodedPin);
                     ps1.setString(5, facility);
                     ps1.executeUpdate();
 
                     PreparedStatement ps2 = conn.c.prepareStatement(query2);
                     ps2.setString(1, formno);
-                    ps2.setString(2, cardnumber);
-                    ps2.setString(3, pinnumber);
+                    ps2.setString(2, cardNumber);
+                    ps2.setString(3, encodedPin);
                     ps2.setInt(4, wrong_attempts);
                     ps2.setTimestamp(5, lockedUntil);
                     ps2.executeUpdate();
 
                     PreparedStatement ps3 = conn.c.prepareStatement(query3);
-                    ps3.setString(1, cardnumber);
-                    ps3.setString(2, pinnumber);
+                    ps3.setString(1, cardNumber);
+                    ps3.setString(2, encodedPin);
                     ps3.setInt(3, balance);
                     ps3.executeUpdate();
 
-                    JOptionPane.showMessageDialog(null, "STK:" + cardnumber + "\n Pin:" + pinnumber);
-                    System.out.println("Card: " + cardnumber);
-                    System.out.println("Carddencrypt: " + encodedCarnumber);
-                    System.out.println("Pindencrypt: " + pinnumber);
-                    System.out.println("Pindencrypt: " + encodedPin);
+                    JOptionPane.showMessageDialog(null, "STK:" + cardNumber + "\n Pin:" + pinNumber);
+                    System.out.println("Card: " + cardNumber);
+                    System.out.println("Pin: " + pinNumber);
                     setVisible(false);
-                    new Deposit(pinnumber).setVisible(false);
+                    new Login().setVisible(true);
                 }
 
             } catch (Exception e) {
