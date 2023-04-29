@@ -1,26 +1,22 @@
 package atm.simulator.system;
 
-import com.encryption.RSAEncryption;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.KeyPair;
-import java.security.PublicKey;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Base64;
 import java.util.Date;
 
 public class Transfer extends JFrame implements ActionListener {
 
     JTextField receiverAccNo, amount;
     JButton transfer, back;
-    String pinnumber;
+    String cardnumber;
 
-    Transfer(String pinnumber) {
-        this.pinnumber = pinnumber;
+    Transfer(String cardnumber) {
+        this.cardnumber = cardnumber;
         setLayout(null);
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icon/atm.jpg"));
         Image i2 = i1.getImage().getScaledInstance(900, 1054, Image.SCALE_DEFAULT);
@@ -109,63 +105,10 @@ public class Transfer extends JFrame implements ActionListener {
         return "số quá lớn";
     }
 
-    // Code chưa mã hoá - không xoá
-   /* public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() == back) {
-            setVisible(false);
-            new Transactions(pinnumber).setVisible(true);
-        } else if (ae.getSource() == transfer) {
-            String receiverAccNoText = receiverAccNo.getText();
-            String transferAmount = amount.getText();
-
-            if (receiverAccNoText.equals("") || transferAmount.equals("")) {
-                JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin chuyển khoản!.");
-            } else {
-                try {
-                    Conn conn = new Conn();
-                    ResultSet rs = conn.s.executeQuery("SELECT balance FROM bank_account WHERE pin='" + pinnumber + "'");
-                    if (rs.next()) {
-                        int senderBalance = rs.getInt("balance");
-                        int transferAmountInt = Integer.parseInt(transferAmount);
-                        if (transferAmountInt <= 0) {
-                            JOptionPane.showMessageDialog(null, "Số tiền chuyển khoản không hợp lệ! Vui lòng nhập số tiền hợp lệ.");
-                        } else if (transferAmountInt > senderBalance) {
-                            JOptionPane.showMessageDialog(null, "Số dư tài khoản không đủ để chuyển khoản!.");
-                        } else {
-                            // Update số dư của tài khoản người nhận
-                            String updateReceiverQuery = "UPDATE bank_account SET balance=balance+" + transferAmountInt + " WHERE acc_no='" + receiverAccNoText + "'";
-                            conn.s.executeUpdate(updateReceiverQuery);
-
-                            // Update số dư của tài khoản gửi
-                            String updateSenderQuery = "UPDATE bank_account SET balance=balance-" + transferAmountInt + " WHERE pin='" + pinnumber + "'";
-                            conn.s.executeUpdate(updateSenderQuery);
-
-                            // Insert transaction into atm table
-                            Date date = new Date();
-                            String insertQuery = "insert into atm values('" + pinnumber + "', '" + date + "', 'Chuyển khoản', '" + transferAmount + "')";
-                            conn.s.executeUpdate(insertQuery);
-
-                            // Display success message and go back to transactions page
-                            int transferAmountIntCopy = transferAmountInt;
-                            String transferAmountWords = numberToWords(transferAmountIntCopy);
-                            JOptionPane.showMessageDialog(null, "Số tiền đã chuyển là: " + transferAmountWords);
-                            setVisible(false);
-                            new Transactions(pinnumber).setVisible(true);
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Không tìm thấy tài khoản!.");
-                    }
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-            }
-        }
-    }*/
-
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == back) {
             setVisible(false);
-            new Transactions(pinnumber).setVisible(true);
+            new Transactions(cardnumber).setVisible(true);
         } else if (ae.getSource() == transfer) {
             String receiverAccNoText = receiverAccNo.getText();
             String transferAmount = amount.getText();
@@ -177,13 +120,8 @@ public class Transfer extends JFrame implements ActionListener {
                     Conn conn = new Conn();
 
                     // Kiểm tra số dư tài khoản gửi
-                    PreparedStatement ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE pin = ?");
-                    KeyPair keyPair = RSAEncryption.generateKeyPair();
-                    PublicKey publicKey = keyPair.getPublic();
-                    byte[] pinHash = RSAEncryption.hash(pinnumber);
-                    byte[] encryptedPin = RSAEncryption.encrypt(pinHash, publicKey);
-                    String encodedPin = Base64.getEncoder().encodeToString(encryptedPin);
-                    ps.setString(1, encodedPin);
+                    PreparedStatement ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE acc_no = ?");
+                    ps.setString(1, cardnumber);
                     ResultSet rs = ps.executeQuery();
 
                     if (rs.next()) {
@@ -201,16 +139,16 @@ public class Transfer extends JFrame implements ActionListener {
                             ps.executeUpdate();
 
                             // Update số dư của tài khoản gửi
-                            ps = conn.c.prepareStatement("UPDATE bank_account SET balance=balance-? WHERE pin=?pin");
+                            ps = conn.c.prepareStatement("UPDATE bank_account SET balance=balance-? WHERE acc_no=?");
                             ps.setInt(1, transferAmountInt);
-                            ps.setString(2, encodedPin);
+                            ps.setString(2, cardnumber);
                             ps.executeUpdate();
 
                             // Insert transaction into atm table
                             Date date = new Date();
                             String insertQuery = "insert into atm values(?, ?, ?, ?)";
                             ps = conn.c.prepareStatement(insertQuery);
-                            ps.setString(1, encodedPin);
+                            ps.setString(1, cardnumber);
                             ps.setString(2, date.toString());
                             ps.setString(3, "Chuyển khoản");
                             ps.setString(4, transferAmount);
@@ -221,7 +159,7 @@ public class Transfer extends JFrame implements ActionListener {
                             String transferAmountWords = numberToWords(transferAmountIntCopy);
                             JOptionPane.showMessageDialog(null, "Số tiền đã chuyển là: " + transferAmountWords);
                             setVisible(false);
-                            new Transactions(pinnumber).setVisible(true);
+                            new Transactions(cardnumber).setVisible(true);
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "Không tìm thấy tài khoản!.");
