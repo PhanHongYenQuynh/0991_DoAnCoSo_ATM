@@ -31,17 +31,17 @@ public class FastCash extends JFrame implements ActionListener {
         text.setFont(new Font("System", Font.BOLD, 16));
         image.add(text);
 
-        onehundred = new JButton("100 VNĐ");
+        onehundred = new JButton("100000 VNĐ");
         onehundred.setBounds(170, 415, 150, 30);
         onehundred.addActionListener(this);
         image.add(onehundred);
 
-        twohundred = new JButton("200 VNĐ");
+        twohundred = new JButton("200000 VNĐ");
         twohundred.setBounds(355, 415, 150, 30);
         twohundred.addActionListener(this);
         image.add(twohundred);
 
-        fivehundred = new JButton("500 VNĐ");
+        fivehundred = new JButton("500000 VNĐ");
         fivehundred.setBounds(170, 450, 150, 30);
         fivehundred.addActionListener(this);
         image.add(fivehundred);
