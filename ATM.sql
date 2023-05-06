@@ -57,7 +57,7 @@ create table login(
 
 
 create table atm(
-	pin varbinary(1024), 
+	cardnumber varbinary(1024), 
 	date varchar(50), 
 	type varchar(20), 
 	amount nvarchar(120)
