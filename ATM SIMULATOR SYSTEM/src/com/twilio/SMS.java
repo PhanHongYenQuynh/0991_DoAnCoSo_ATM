@@ -6,7 +6,7 @@ import com.twilio.type.PhoneNumber;
 
 public class SMS {
     public static final String ACCOUNT_SID = "ACec36b89d26705fbb11b8f10ce75fb408";// Add after
-    public static final String AUTH_TOKEN = "0d0262bcda1f0230754e176ba5f150f7";// Add after
+    public static final String AUTH_TOKEN = "Null";// Add after
     public static final String TO_NUMBER = "+84986556949";// Add after
     public static final String FROM_NUMBER = "+16315576245";// Add after
 
