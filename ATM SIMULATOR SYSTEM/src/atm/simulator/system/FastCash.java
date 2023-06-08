@@ -1,7 +1,4 @@
 package atm.simulator.system;
-/*import com.github.tiennv147.vnconvert.NumberToWords;*/
-
-import com.encryption.RSAEncryption;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,11 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 public class FastCash extends JFrame implements ActionListener {
     JButton onehundred, twohundred, fivehundred, onemillion, twomillion, fivemillion, other, back;
     String cardnumber;
+    DecimalFormat decimalFormat = new DecimalFormat("#,### VNĐ");
 
     FastCash(String cardnumber) {
         this.cardnumber = cardnumber;
@@ -31,32 +30,32 @@ public class FastCash extends JFrame implements ActionListener {
         text.setFont(new Font("System", Font.BOLD, 16));
         image.add(text);
 
-        onehundred = new JButton("100000 VNĐ");
+        onehundred = new  JButton(decimalFormat.format(100000));
         onehundred.setBounds(170, 415, 150, 30);
         onehundred.addActionListener(this);
         image.add(onehundred);
 
-        twohundred = new JButton("200000 VNĐ");
+        twohundred = new JButton(decimalFormat.format(200000));
         twohundred.setBounds(355, 415, 150, 30);
         twohundred.addActionListener(this);
         image.add(twohundred);
 
-        fivehundred = new JButton("500000 VNĐ");
+        fivehundred = new JButton(decimalFormat.format(500000));
         fivehundred.setBounds(170, 450, 150, 30);
         fivehundred.addActionListener(this);
         image.add(fivehundred);
 
-        onemillion = new JButton("1000000 VNĐ");
+        onemillion =  new JButton(decimalFormat.format(1000000));
         onemillion.setBounds(355, 450, 150, 30);
         onemillion.addActionListener(this);
         image.add(onemillion);
 
-        twomillion = new JButton("2000000 VNĐ");
+        twomillion = new JButton(decimalFormat.format(2000000));
         twomillion.setBounds(170, 485, 150, 30);
         twomillion.addActionListener(this);
         image.add(twomillion);
 
-        fivemillion = new JButton("5000000 VNĐ");
+        fivemillion = new JButton(decimalFormat.format(5000000));
         fivemillion.setBounds(355, 485, 150, 30);
         fivemillion.addActionListener(this);
         image.add(fivemillion);
@@ -79,41 +78,6 @@ public class FastCash extends JFrame implements ActionListener {
 
     }
 
-    public static String numberToWords(int number) {
-        if (number == 0) {
-            return " đồng";
-        }
-
-        String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
-                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"};
-        String[] tens = {"", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
-
-        if (number < 0) {
-            return "âm " + numberToWords(Math.abs(number));
-        }
-
-        if (number < 20) {
-            return units[number];
-        }
-
-        if (number < 100) {
-            return tens[number / 10] + ((number % 10 != 0) ? " " : "") + units[number % 10];
-        }
-
-        if (number < 1000) {
-            return units[number / 100] + " trăm" + ((number % 100 != 0) ? " " : "") + numberToWords(number % 100);
-        }
-
-        if (number < 1000000) {
-            return numberToWords(number / 1000) + " nghìn" + ((number % 1000 != 0) ? " " : "") + numberToWords(number % 1000);
-        }
-
-        if (number < 1000000000) {
-            return numberToWords(number / 1000000) + " triệu" + ((number % 1000000 != 0) ? " " : "") + numberToWords(number % 1000000);
-        }
-
-        return "số quá lớn";
-    }
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == back) {
             setVisible(false);
@@ -123,6 +87,7 @@ public class FastCash extends JFrame implements ActionListener {
             new Withdrawal(cardnumber).setVisible(true);
         } else {
             String amount = ((JButton) ae.getSource()).getText().substring(0, ((JButton) ae.getSource()).getText().length() - 4);
+            amount = amount.replace(".", ""); // Loại bỏ dấu chấm từ chuỗi số tiền
             Conn conn = new Conn();
             try {
                 // Kiểm tra số dư
@@ -132,20 +97,23 @@ public class FastCash extends JFrame implements ActionListener {
                 if (rs.next()) {
                     int currentBalance = rs.getInt("balance");
                     if (currentBalance < Integer.parseInt(amount)) {
-                        JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
+                        JOptionPane.showMessageDialog(null, "Giao dịch thất bại!");
                         return;
                     }
                 }
-                Date date = new Date();
                 int amountInt = Integer.parseInt(amount);
-                String amountText = numberToWords(amountInt);
-                JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
+                int fee = 6000; // Phí rút tiền (6,000 VNĐ)
+                int totalAmount = amountInt + fee; // Tổng số tiền bao gồm phí
+                Date date = new Date();
+                DecimalFormat decimalFormat = new DecimalFormat("#,### VNĐ");
+                String formattedNumber = decimalFormat.format(totalAmount);
+                JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + formattedNumber);
                 ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE acc_no = ?");
                 ps.setString(1, cardnumber);
                 rs = ps.executeQuery();
                 if (rs.next()) {
                     int currentBalance = rs.getInt("balance");
-                    int newBalance = currentBalance - amountInt;
+                    int newBalance = currentBalance - totalAmount; // Trừ tổng số tiền bao gồm phí
                     ps = conn.c.prepareStatement("UPDATE bank_account SET balance = ? WHERE acc_no = ?");
                     ps.setInt(1, newBalance);
                     ps.setString(2, cardnumber);
@@ -165,9 +133,6 @@ public class FastCash extends JFrame implements ActionListener {
             }
         }
     }
-
-
-
 
     public static void main(String args[]) {
 

@@ -1,11 +1,13 @@
 package atm.simulator.system;
 
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 public class Deposit extends JFrame implements ActionListener {
@@ -33,6 +35,8 @@ public class Deposit extends JFrame implements ActionListener {
         amount = new JTextField();
         amount.setFont(new Font("Raleway", Font.BOLD, 14));
         amount.setBounds(170, 350, 320, 20);
+        // Đặt bộ lọc cho JTextField để chỉ cho phép nhập số và dấu chấm
+        ((AbstractDocument) amount.getDocument()).setDocumentFilter(new NumberFilter());
         image.add(amount);
 
         deposit = new JButton("Gửi tiền");
@@ -53,20 +57,20 @@ public class Deposit extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == deposit) {
-            String number = amount.getText();
+            String number = amount.getText().replace(".", "");
             Date date = new Date();
             if (number.equals("")) {
-                JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn gửi!.");
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn gửi!");
             } else {
                 // Kiểm tra số tiền nhập vào không phải số âm
                 try {
                     int amountInt = Integer.parseInt(number);
                     if (amountInt <= 0) {
-                        JOptionPane.showMessageDialog(null, "Số tiền gửi không hợp lệ!.");
+                        JOptionPane.showMessageDialog(null, "Số tiền gửi không hợp lệ!");
                         return;
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Số tiền gửi không hợp lệ!.");
+                    JOptionPane.showMessageDialog(null, "Số tiền gửi không hợp lệ!");
                     return;
                 }
 
@@ -93,7 +97,9 @@ public class Deposit extends JFrame implements ActionListener {
                     ps2.setString(2, cardnumber);
                     ps1.executeUpdate();
                     ps2.executeUpdate();
-                    JOptionPane.showMessageDialog(null, "Tiền gửi thành công là: " + number + " VNĐ");
+                    DecimalFormat decimalFormat = new DecimalFormat("#,### VNĐ");
+                    String formattedNumber = decimalFormat.format(Integer.parseInt(number));
+                    JOptionPane.showMessageDialog(null, "Tiền gửi thành công là: " + formattedNumber );
                     setVisible(false);
                     new Transactions(cardnumber).setVisible(true);
                 } catch (Exception e) {

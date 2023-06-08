@@ -1,12 +1,16 @@
 package atm.simulator.system;
 
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.util.Date;
+
 
 public class Withdrawal extends JFrame implements ActionListener {
 
@@ -33,6 +37,8 @@ public class Withdrawal extends JFrame implements ActionListener {
         amount = new JTextField();
         amount.setFont(new Font("Raleway", Font.BOLD, 14));
         amount.setBounds(170, 350, 320, 20);
+        // Đặt bộ lọc cho JTextField để chỉ cho phép nhập số và dấu chấm
+        ((AbstractDocument) amount.getDocument()).setDocumentFilter(new NumberFilter());
         image.add(amount);
 
         withdrawl = new JButton("Đồng ý");
@@ -51,46 +57,9 @@ public class Withdrawal extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    public static String numberToWords(int number) {
-        if (number == 0) {
-            return " đồng";
-        }
-
-        String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
-                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"};
-        String[] tens = {"", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
-
-        if (number < 0) {
-            return "âm " + numberToWords(Math.abs(number));
-        }
-
-        if (number < 20) {
-            return units[number];
-        }
-
-        if (number < 100) {
-            return tens[number / 10] + ((number % 10 != 0) ? " " : "") + units[number % 10];
-        }
-
-        if (number < 1000) {
-            return units[number / 100] + " trăm" + ((number % 100 != 0) ? " " : "") + numberToWords(number % 100);
-        }
-
-        if (number < 1000000) {
-            return numberToWords(number / 1000) + " nghìn" + ((number % 1000 != 0) ? " " : "") + numberToWords(number % 1000);
-        }
-
-        if (number < 1000000000) {
-            return numberToWords(number / 1000000) + " triệu" + ((number % 1000000 != 0) ? " " : "") + numberToWords(number % 1000000);
-        }
-
-        return "số quá lớn";
-    }
-
-
     public void actionPerformed(ActionEvent ae) {
         try {
-            String number = amount.getText();
+            String number = amount.getText().replace(".", ""); // Loại bỏ dấu chấm trước khi lưu vào cơ sở dữ liệu
             Date date = new Date();
 
             if (ae.getSource() == withdrawl) {
@@ -108,14 +77,19 @@ public class Withdrawal extends JFrame implements ActionListener {
                     if (rs.next()) {
                         int currentBalance = rs.getInt("balance");
                         if (currentBalance < Integer.parseInt(number)) {
-                            JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại số dư tài khoản!.");
+                            JOptionPane.showMessageDialog(null, "Giao dịch thất bại!");
                             return;
                         }
                     }
 
                     int amountInt = Integer.parseInt(number);
-                    String amountText = numberToWords(amountInt);
-                    JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + amountText);
+                    int fee = 6000; // Phí rút tiền
+                    int totalAmount = amountInt + fee;
+
+                    DecimalFormat decimalFormat = new DecimalFormat("#,###");
+                    String formattedNumber = decimalFormat.format(totalAmount);
+
+                    JOptionPane.showMessageDialog(null, "Số tiền đã rút là: " + formattedNumber);
 
                     // update account balance in bank_account table
                     ps = conn.c.prepareStatement("SELECT balance FROM bank_account WHERE acc_no = ?");
@@ -123,7 +97,7 @@ public class Withdrawal extends JFrame implements ActionListener {
                     rs = ps.executeQuery();
                     if (rs.next()) {
                         int currentBalance = rs.getInt("balance");
-                        int newBalance = currentBalance - amountInt;
+                        int newBalance = currentBalance - totalAmount;
                         ps = conn.c.prepareStatement("UPDATE bank_account SET balance = ? WHERE acc_no = ?");
                         ps.setInt(1, newBalance);
                         ps.setString(2, cardnumber);
@@ -149,7 +123,6 @@ public class Withdrawal extends JFrame implements ActionListener {
             System.out.println("error: " + e);
         }
     }
-
 
     public static void main(String args[]) {
         new Withdrawal("").setVisible(true);

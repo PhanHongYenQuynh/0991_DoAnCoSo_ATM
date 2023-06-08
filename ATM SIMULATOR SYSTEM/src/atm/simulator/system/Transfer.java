@@ -1,13 +1,17 @@
 package atm.simulator.system;
-
-
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.util.Date;
+
 
 public class Transfer extends JFrame implements ActionListener {
 
@@ -51,6 +55,8 @@ public class Transfer extends JFrame implements ActionListener {
         amount = new JTextField();
         amount.setFont(new Font("Raleway", Font.BOLD, 14));
         amount.setBounds(280, 457, 230, 25);
+        // Đặt bộ lọc cho JTextField để chỉ cho phép nhập số và dấu chấm
+        ((AbstractDocument) amount.getDocument()).setDocumentFilter(new NumberFilter());
         image.add(amount);
 
         transfer = new JButton("Chuyển khoản");
@@ -69,41 +75,6 @@ public class Transfer extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    public static String numberToWords(int number) {
-        if (number == 0) {
-            return " đồng";
-        }
-
-        String[] units = {"", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín", "mười",
-                "mười một", "mười hai", "mười ba", "mười bốn", "mười lăm", "mười sáu", "mười bảy", "mười tám", "mười chín"};
-        String[] tens = {"", "", "hai mươi", "ba mươi", "bốn mươi", "năm mươi", "sáu mươi", "bảy mươi", "tám mươi", "chín mươi"};
-
-        if (number < 0) {
-            return "âm " + numberToWords(Math.abs(number));
-        }
-
-        if (number < 20) {
-            return units[number];
-        }
-
-        if (number < 100) {
-            return tens[number / 10] + ((number % 10 != 0) ? " " : "") + units[number % 10];
-        }
-
-        if (number < 1000) {
-            return units[number / 100] + " trăm" + ((number % 100 != 0) ? " " : "") + numberToWords(number % 100);
-        }
-
-        if (number < 1000000) {
-            return numberToWords(number / 1000) + " nghìn" + ((number % 1000 != 0) ? " " : "") + numberToWords(number % 1000);
-        }
-
-        if (number < 1000000000) {
-            return numberToWords(number / 1000000) + " triệu" + ((number % 1000000 != 0) ? " " : "") + numberToWords(number % 1000000);
-        }
-
-        return "số quá lớn";
-    }
 
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == back) {
@@ -111,10 +82,10 @@ public class Transfer extends JFrame implements ActionListener {
             new Transactions(cardnumber).setVisible(true);
         } else if (ae.getSource() == transfer) {
             String receiverAccNoText = receiverAccNo.getText();
-            String transferAmount = amount.getText();
+            String transferAmount = amount.getText().replace(".", "");
 
             if (receiverAccNoText.equals("") || transferAmount.equals("")) {
-                JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin chuyển khoản!.");
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin chuyển khoản!");
             } else {
                 try {
                     Conn conn = new Conn();
@@ -130,7 +101,7 @@ public class Transfer extends JFrame implements ActionListener {
                         if (transferAmountInt <= 0) {
                             JOptionPane.showMessageDialog(null, "Số tiền chuyển khoản không hợp lệ! Vui lòng nhập số tiền hợp lệ.");
                         } else if (transferAmountInt > senderBalance) {
-                            JOptionPane.showMessageDialog(null, "Số dư tài khoản không đủ để chuyển khoản!.");
+                            JOptionPane.showMessageDialog(null, "Số dư tài khoản không đủ để chuyển khoản!");
                         } else {
                             // Update số dư của tài khoản người nhận
                             ps = conn.c.prepareStatement("UPDATE bank_account SET balance=balance+? WHERE acc_no=?");
@@ -156,13 +127,14 @@ public class Transfer extends JFrame implements ActionListener {
 
                             // Display success message and go back to transactions page
                             int transferAmountIntCopy = transferAmountInt;
-                            String transferAmountWords = numberToWords(transferAmountIntCopy);
-                            JOptionPane.showMessageDialog(null, "Số tiền đã chuyển là: " + transferAmountWords);
+                            DecimalFormat decimalFormat = new DecimalFormat("#,### VNĐ");
+                            String formattedAmount = decimalFormat.format(Integer.parseInt(transferAmount));
+                            JOptionPane.showMessageDialog(null, "Số tiền đã chuyển là: " + formattedAmount);
                             setVisible(false);
                             new Transactions(cardnumber).setVisible(true);
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Không tìm thấy tài khoản!.");
+                        JOptionPane.showMessageDialog(null, "Không tìm thấy tài khoản!");
                     }
                 } catch (Exception e) {
                     System.out.println(e);

@@ -1,13 +1,12 @@
 package atm.simulator.system;
 
-import com.encryption.RSAEncryption;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 
 
 public class BalancEnquiry extends JFrame implements ActionListener {
@@ -44,8 +43,9 @@ public class BalancEnquiry extends JFrame implements ActionListener {
         } catch (Exception e) {
             System.out.println(e);
         }
-
-        JLabel text = new JLabel("Số dư tài khoản của quý khách là:" + balance);
+        DecimalFormat decimalFormat = new DecimalFormat("#,### VNĐ");
+        String formattedBalance = decimalFormat.format(balance);
+        JLabel text = new JLabel("Số dư tài khoản của quý khách là:" + formattedBalance);
         text.setForeground(Color.WHITE);
         text.setBounds(170, 300, 400, 30);
         image.add(text);
