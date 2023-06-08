@@ -1,16 +1,23 @@
 package atm.simulator.system;
 
-import com.encryption.RSAEncryption;
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.KeyPair;
-import java.security.PublicKey;
+import java.io.FileOutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Base64;
+import java.text.DecimalFormat;
+
 
 public class MiniStatement extends JFrame implements ActionListener {
 
@@ -64,7 +71,9 @@ public class MiniStatement extends JFrame implements ActionListener {
             if (rs.next()) {
                 // Hiển thị số dư tài khoản
                 balance = rs.getInt("balance");
-                balancee.setText("Số dư tài khoản là: " + balance + "VNĐ");
+                DecimalFormat decimalFormat = new DecimalFormat("#,### VNĐ");
+                String formattedBalance = decimalFormat.format(balance);
+                balancee.setText("Số dư tài khoản là: " + formattedBalance);
 
                 // Hiển thị lịch sử giao dịch
                 query = "SELECT * FROM atm where cardnumber = ?";
@@ -95,7 +104,15 @@ public class MiniStatement extends JFrame implements ActionListener {
         setLocation(20, 20);
         getContentPane().setBackground(Color.WHITE);
         setVisible(true);
+        exportToPDF("ministatement.pdf");
     }
+
+    public static String formatCurrency(int amount) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        return decimalFormat.format(amount);
+    }
+
+
 
     public static String numberToWords(int number) {
         if (number == 0) {
@@ -132,6 +149,37 @@ public class MiniStatement extends JFrame implements ActionListener {
 
         return "số quá lớn";
     }
+
+    public void exportToPDF(String filePath) {
+        try {
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(filePath));
+            document.open();
+
+            com.itextpdf.text.Font font = FontFactory.getFont("STSong-Light", "UniGB-UCS2-H", BaseFont.EMBEDDED, 14, Font.BOLD, BaseColor.BLACK);
+
+            Paragraph title = new Paragraph("Sao kê giao dịch", font);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+
+            Conn conn = new Conn();
+            String query = "SELECT * FROM atm where cardnumber = ?";
+            PreparedStatement ps = conn.c.prepareStatement(query);
+            ps.setString(1, cardnumber);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Paragraph paragraph = new Paragraph(rs.getString("date") + " - " + rs.getString("type") + " - " + formatCurrency(rs.getInt("amount")));
+                document.add(paragraph);
+            }
+
+            document.close();
+
+            System.out.println("Xuất file PDF thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void actionPerformed(ActionEvent ae) {
         this.setVisible(false);
