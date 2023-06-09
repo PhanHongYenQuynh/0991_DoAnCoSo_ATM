@@ -103,35 +103,44 @@ public class Transfer extends JFrame implements ActionListener {
                         } else if (transferAmountInt > senderBalance) {
                             JOptionPane.showMessageDialog(null, "Số dư tài khoản không đủ để chuyển khoản!");
                         } else {
-                            // Update số dư của tài khoản người nhận
-                            ps = conn.c.prepareStatement("UPDATE bank_account SET balance=balance+? WHERE acc_no=?");
-                            ps.setInt(1, transferAmountInt);
-                            ps.setString(2, receiverAccNoText);
-                            ps.executeUpdate();
+                            // Kiểm tra số tài khoản người nhận có tồn tại trong bảng bank_account hay không
+                            ps = conn.c.prepareStatement("SELECT acc_no FROM bank_account WHERE acc_no = ?");
+                            ps.setString(1, receiverAccNoText);
+                            ResultSet receiverRs = ps.executeQuery();
 
-                            // Update số dư của tài khoản gửi
-                            ps = conn.c.prepareStatement("UPDATE bank_account SET balance=balance-? WHERE acc_no=?");
-                            ps.setInt(1, transferAmountInt);
-                            ps.setString(2, cardnumber);
-                            ps.executeUpdate();
+                            if (receiverRs.next()) {
+                                // Update số dư của tài khoản người nhận
+                                ps = conn.c.prepareStatement("UPDATE bank_account SET balance=balance+? WHERE acc_no=?");
+                                ps.setInt(1, transferAmountInt);
+                                ps.setString(2, receiverAccNoText);
+                                ps.executeUpdate();
 
-                            // Insert transaction into atm table
-                            Date date = new Date();
-                            String insertQuery = "insert into atm values(?, ?, ?, ?)";
-                            ps = conn.c.prepareStatement(insertQuery);
-                            ps.setString(1, cardnumber);
-                            ps.setString(2, date.toString());
-                            ps.setString(3, "Chuyển khoản");
-                            ps.setString(4, transferAmount);
-                            ps.executeUpdate();
+                                // Update số dư của tài khoản gửi
+                                ps = conn.c.prepareStatement("UPDATE bank_account SET balance=balance-? WHERE acc_no=?");
+                                ps.setInt(1, transferAmountInt);
+                                ps.setString(2, cardnumber);
+                                ps.executeUpdate();
 
-                            // Display success message and go back to transactions page
-                            int transferAmountIntCopy = transferAmountInt;
-                            DecimalFormat decimalFormat = new DecimalFormat("#,### VNĐ");
-                            String formattedAmount = decimalFormat.format(Integer.parseInt(transferAmount));
-                            JOptionPane.showMessageDialog(null, "Số tiền đã chuyển là: " + formattedAmount);
-                            setVisible(false);
-                            new Transactions(cardnumber).setVisible(true);
+                                // Insert transaction into atm table
+                                Date date = new Date();
+                                String insertQuery = "insert into atm values(?, ?, ?, ?)";
+                                ps = conn.c.prepareStatement(insertQuery);
+                                ps.setString(1, cardnumber);
+                                ps.setString(2, date.toString());
+                                ps.setString(3, "Chuyển khoản");
+                                ps.setString(4, transferAmount);
+                                ps.executeUpdate();
+
+                                // Display success message and go back to transactions page
+                                int transferAmountIntCopy = transferAmountInt;
+                                DecimalFormat decimalFormat = new DecimalFormat("#,### VNĐ");
+                                String formattedAmount = decimalFormat.format(Integer.parseInt(transferAmount));
+                                JOptionPane.showMessageDialog(null, "Số tiền đã chuyển là: " + formattedAmount);
+                                setVisible(false);
+                                new Transactions(cardnumber).setVisible(true);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Không tìm thấy tài khoản người nhận!");
+                            }
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "Không tìm thấy tài khoản!");
@@ -142,6 +151,7 @@ public class Transfer extends JFrame implements ActionListener {
             }
         }
     }
+
 
 
     public static void main(String args[]) {

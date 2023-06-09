@@ -64,9 +64,9 @@ public class Withdrawal extends JFrame implements ActionListener {
 
             if (ae.getSource() == withdrawl) {
                 if (number.equals("")) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn rút!.");
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền quý khách muốn rút!");
                 } else if (Integer.parseInt(number) <= 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền hợp lệ!.");
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số tiền hợp lệ!");
                 } else {
                     Conn conn = new Conn();
 
